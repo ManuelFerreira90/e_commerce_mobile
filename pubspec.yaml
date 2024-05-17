@@ -40,6 +40,8 @@ dependencies:
   phone_numbers_parser: ^8.2.1
   email_validator: ^2.1.17
   anim_search_bar: ^2.0.3
+  banner_carousel: ^1.2.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
+import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:e_commerce_mobile/screen/login_page.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
@@ -58,10 +59,20 @@ class _CheckPageState extends State<CheckPage> {
 
     if(response.statusCode == 200){
       perfil = await jsonDecode(response.body);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage(perfil: perfil,)),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => HomePage(
+      //     userLogged: User(
+      //       perfil['ssn'] as int,
+      //       perfil['name'] as String,
+      //       perfil['lastName'] as String,
+      //       perfil['email'] as String,
+      //       perfil['image'] as String,
+      //       perfil['phone'] as String,
+      //       perfil['address'] as Map<String, dynamic>,
+      //     ),
+      //   )),
+      // );
     }else{
       handleAPIError(context, response);
       Navigator.push(

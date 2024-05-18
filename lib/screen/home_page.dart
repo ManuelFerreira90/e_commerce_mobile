@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:e_commerce_mobile/api/make_request.dart';
+import 'package:e_commerce_mobile/components/carrosel_view.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
+import 'package:e_commerce_mobile/models/banner_images.dart';
 import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/check_page.dart';
 import 'package:e_commerce_mobile/screen/profile_page.dart';
@@ -12,26 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:banner_carousel/banner_carousel.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_with_discount.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_with_image.dart';
+import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
 import 'package:e_commerce_mobile/components/card_carrosel.dart';
-
-class BannerImages {
-  static const String banner1 =
-      "https://picjumbo.com/wp-content/uploads/the-golden-gate-bridge-sunset-1080x720.jpg";
-  static const String banner2 =
-      "https://cdn.mos.cms.futurecdn.net/Nxz3xSGwyGMaziCwiAC5WW-1024-80.jpg";
-  static const String banner3 = "https://wallpaperaccess.com/full/19921.jpg";
-  static const String banner4 =
-      "https://images.pexels.com/photos/2635817/pexels-photo-2635817.jpeg?auto=compress&crop=focalpoint&cs=tinysrgb&fit=crop&fp-y=0.6&h=500&sharp=20&w=1400";
-
-  static List<BannerModel> listBanners = [
-    BannerModel(imagePath: banner1, id: "1"),
-    BannerModel(imagePath: banner2, id: "2"),
-    BannerModel(imagePath: banner3, id: "3"),
-    BannerModel(imagePath: banner4, id: "4"),
-  ];
-}
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -46,27 +31,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late TextEditingController _searchController;
-  List<BannerModel> listBanners = BannerImages.listBanners;
-  late List<CardCarroselWithDiscount> salesCard;
-
-  List<CardCarrosel> cards = [
-    CardCarrosel(
-      title: 'Category 1',
-      width: kWidthCategories,
-      height: kHeightCategories,
-    ),
-    CardCarrosel(
-      title: 'Category 2',
-      width: kWidthCategories,
-      height: kHeightCategories,
-    ),
-  ];
+  List<BannerModel> listBanners = [];
+  List<CardCarroselProducts> salesCard = [];
+  List<CardCarroselProducts> allProductsCard = [];
+  List<CardCarrosel> cards = [];
+  Map<String, dynamic> cardMap = {};
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    getProducts();
+    fetchApi();
   }
 
   @override
@@ -151,6 +126,13 @@ class _HomePageState extends State<HomePage> {
               width: kWidthSales,
               height: kHeightSales
             ),
+            const SizedBox(height: 20),
+            CarrosselView(
+                cardsWithDiscount: allProductsCard,
+                title: 'All Products',
+                width: kWidthSales,
+                height: kHeightSales
+            ),
           ],
         ),
       ),
@@ -180,22 +162,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
   
-  getProducts() async{
-    var url = Uri.https('dummyjson.com', 'products');
-    var response = await makeGetRequest(url.toString(), {});
+  fetchApi() async{
+    cardMap = await getProductsApi(context);
+    final List<CardCarrosel>copyCategories = await getCategoriesApi(context);
 
-    var overlayEntry = OverlayEntry(builder: (context) => const LoadingOverlay());
-    Overlay.of(context).insert(overlayEntry);
-    if(response.statusCode == 200){
-      Map <String, dynamic> products = await jsonDecode(response.body);
-      final List<CardCarroselWithDiscount> copy = await ConvertJsonCard.convertJsonCard(products);
-      setState(() {
-        salesCard = copy;
-      });
-    }else{
-      handleAPIError(context, response);
-    }
-    overlayEntry.remove();
+    final BannerImages copyImages = BannerImages(listBanners: cardMap['url']);
+
+    setState(() {
+      listBanners = copyImages.listBanners;
+      cards = copyCategories;
+      salesCard = cardMap['sales'];
+      allProductsCard = cardMap['allProducts'];
+    });
   }
 
   logout() async {
@@ -232,44 +210,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class CarrosselView extends StatelessWidget {
-  CarrosselView({
-    super.key,
-    required this.title,
-    required this.width,
-    required this.height,
-    this.cards,
-    this.cardsWithDiscount,
-    this.cardsWithImage,
-  });
 
-  final String title;
-  final double width;
-  final double height;
-  final List<CardCarroselWithDiscount>? cardsWithDiscount;
-  final List<CardCarroselWithImage>? cardsWithImage;
-  final List<CardCarrosel>? cards;
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: kTitlesStyle,
-        ),
-        const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: cards ?? cardsWithDiscount ?? cardsWithImage ?? [],
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 
 

@@ -20,7 +20,7 @@ const kColorSlider = Colors.lime;
 const kColorPrimary = Colors.black12;
 const kWidthCategories = 100.0;
 const kHeightCategories = 100.0;
-const kWidthSales = 190.0;
+const kWidthSales = 200.0;
 const kHeightSales = 100.0;
 const kCategoryStyle = TextStyle(
   fontSize: 14,

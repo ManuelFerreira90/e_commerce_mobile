@@ -4,24 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../styles/const.dart';
 
-class CardCarroselWithDiscount extends StatefulWidget {
-  CardCarroselWithDiscount({
+class CardCarroselProducts extends StatefulWidget {
+  CardCarroselProducts({
     super.key,
     required this.width,
     required this.height,
     required this.product,
+    required this.isSale,
   });
 
   final Product product;
   final double width;
   final double height;
   bool isFavorite = false;
+  final bool isSale;
 
   @override
-  State<CardCarroselWithDiscount> createState() => _CardCarroselWithDiscountState();
+  State<CardCarroselProducts> createState() => _CardCarroselProductsState();
 }
 
-class _CardCarroselWithDiscountState extends State<CardCarroselWithDiscount> {
+class _CardCarroselProductsState extends State<CardCarroselProducts> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -49,7 +51,7 @@ class _CardCarroselWithDiscountState extends State<CardCarroselWithDiscount> {
                     ),
                   ),
                 ),
-                Positioned(
+                widget.isSale ? Positioned(
                   top: 0.0,
                   right: 0.0,
                   child: Container(
@@ -66,9 +68,9 @@ class _CardCarroselWithDiscountState extends State<CardCarroselWithDiscount> {
                       ),
                     ),
                   ),
-                ),
+                ) : SizedBox.shrink(),
                 Positioned(
-                  top: 80.0,
+                  top: 75.0,
                   child: Container(
                     padding: EdgeInsets.all(5.0),
                     decoration: BoxDecoration(

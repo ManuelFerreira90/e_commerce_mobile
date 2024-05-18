@@ -18,14 +18,17 @@ class CardCarrosel extends StatelessWidget {
     return Card(
       elevation: 5.0,
       color: kColorPrimary,
-      child: Container(
-        width: width,
-        height: height,
-        child: Center(
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: kCategoryStyle,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          width: width,
+          height: height,
+          child: Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: kCategoryStyle,
+            ),
           ),
         ),
       ),

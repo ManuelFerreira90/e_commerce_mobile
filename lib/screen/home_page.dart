@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:e_commerce_mobile/api/make_request.dart';
+import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/check_page.dart';
 import 'package:e_commerce_mobile/screen/profile_page.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
+import 'package:e_commerce_mobile/utils/convert_json_card.dart';
+import 'package:e_commerce_mobile/utils/handle_api_error.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
@@ -41,11 +47,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late TextEditingController _searchController;
   List<BannerModel> listBanners = BannerImages.listBanners;
+  late List<CardCarroselWithDiscount> salesCard;
+
+  List<CardCarrosel> cards = [
+    CardCarrosel(
+      title: 'Category 1',
+      width: kWidthCategories,
+      height: kHeightCategories,
+    ),
+    CardCarrosel(
+      title: 'Category 2',
+      width: kWidthCategories,
+      height: kHeightCategories,
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    getProducts();
   }
 
   @override
@@ -58,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        //backgroundColor: Colors.white,
         toolbarHeight: 80,
         leadingWidth: 300,
         leading: Container(
@@ -107,22 +128,25 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Container(
-        color: Colors.white,
+        //color: Colors.white,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
             BannerCarousel(
-                activeColor: kColorPrimary,
-                banners: listBanners
+              borderRadius: 30,
+              activeColor: kColorSlider,
+              banners: listBanners
             ),
             const SizedBox(height: 20),
             CarrosselView(
+              cards: cards,
               title: 'Categories',
               width: kWidthCategories,
               height: kHeightCategories,
             ),
             const SizedBox(height: 20),
             CarrosselView(
+              cardsWithDiscount: salesCard,
               title: 'Sales',
               width: kWidthSales,
               height: kHeightSales
@@ -154,6 +178,24 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+  
+  getProducts() async{
+    var url = Uri.https('dummyjson.com', 'products');
+    var response = await makeGetRequest(url.toString(), {});
+
+    var overlayEntry = OverlayEntry(builder: (context) => const LoadingOverlay());
+    Overlay.of(context).insert(overlayEntry);
+    if(response.statusCode == 200){
+      Map <String, dynamic> products = await jsonDecode(response.body);
+      final List<CardCarroselWithDiscount> copy = await ConvertJsonCard.convertJsonCard(products);
+      setState(() {
+        salesCard = copy;
+      });
+    }else{
+      handleAPIError(context, response);
+    }
+    overlayEntry.remove();
   }
 
   logout() async {
@@ -191,16 +233,22 @@ class _HomePageState extends State<HomePage> {
 }
 
 class CarrosselView extends StatelessWidget {
-  const CarrosselView({
+  CarrosselView({
     super.key,
     required this.title,
     required this.width,
     required this.height,
+    this.cards,
+    this.cardsWithDiscount,
+    this.cardsWithImage,
   });
 
   final String title;
   final double width;
   final double height;
+  final List<CardCarroselWithDiscount>? cardsWithDiscount;
+  final List<CardCarroselWithImage>? cardsWithImage;
+  final List<CardCarrosel>? cards;
 
   @override
   Widget build(BuildContext context) {
@@ -215,13 +263,7 @@ class CarrosselView extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              CardCarroselWithDiscount(
-                title: 'womens-jewellery',
-                width: width,
-                height: height,
-              ),
-            ],
+            children: cards ?? cardsWithDiscount ?? cardsWithImage ?? [],
           ),
         ),
       ],

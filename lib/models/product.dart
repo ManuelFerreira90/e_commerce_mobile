@@ -1,17 +1,17 @@
 class Product{
-  final int? _id;
-  final String? _title;
-  final String? _description;
-  final double? _price;
-  final double? _discountPercentage;
-  final double? _rating;
-  final int? _stock;
-  final String? _brand;
-  final String? _category;
-  final String? _thumbnail;
-  final List<String>? _images;
+  final dynamic _id;//
+  final dynamic _title;//
+  final dynamic _description;//
+  final dynamic _price;//
+  final dynamic _discountPercentage;//
+  final dynamic _rating;//
+  final dynamic _stock;//
+  final dynamic _brand;//
+  final dynamic _category;//
+  final dynamic _thumbnail;//
+  final List<dynamic>? _images;//
 
-  Product(int? id, String? title, String? description, double? price, double? discountPercentage, double? rating, int? stock, String? brand, String? category, String? thumbnail, List<String>? images)
+  Product(dynamic id, dynamic title, dynamic description, dynamic price, dynamic discountPercentage, dynamic rating, dynamic stock, dynamic brand, dynamic category, dynamic thumbnail, List<dynamic> images)
       : _id = id,
         _title = title,
         _description = description,
@@ -24,4 +24,15 @@ class Product{
         _thumbnail = thumbnail,
         _images = images;
 
+  int? get id => _id;
+  String? get title => _title;
+  String? get description => _description;
+  int? get price => _price;
+  double? get discountPercentage => _discountPercentage;
+  double? get rating => _rating;
+  int? get stock => _stock;
+  String? get brand => _brand;
+  String? get category => _category;
+  String? get thumbnail => _thumbnail;
+  List<dynamic>? get images => _images;
 }

@@ -16,7 +16,7 @@ class CardCarroselWithImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: kColorPrimary[50],
+      color: kColorPrimary,
       child: Container(
         width: width,
         height: height,

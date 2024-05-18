@@ -16,7 +16,8 @@ class CardCarrosel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: kColorPrimary[50],
+      elevation: 5.0,
+      color: kColorPrimary,
       child: Container(
         width: width,
         height: height,
@@ -24,6 +25,7 @@ class CardCarrosel extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.center,
+            style: kCategoryStyle,
           ),
         ),
       ),

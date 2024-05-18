@@ -3,7 +3,7 @@ import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-ThemeData lightTheme = ThemeData.light().copyWith(
+ThemeData lightTheme = ThemeData.dark().copyWith(
   textTheme: GoogleFonts.montserratAlternatesTextTheme(),
 );
 

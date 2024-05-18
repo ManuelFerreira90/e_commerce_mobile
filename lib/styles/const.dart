@@ -14,10 +14,17 @@ const kPadding = EdgeInsets.all(30);
 const kTitlesStyle = TextStyle(
   fontSize: 24,
   fontWeight: FontWeight.bold,
+  color: Colors.white,
 );
-const kColorPrimary = Colors.lime;
+const kColorSlider = Colors.lime;
+const kColorPrimary = Colors.black12;
 const kWidthCategories = 100.0;
 const kHeightCategories = 100.0;
-const kWidthSales = 150.0;
-const kHeightSales = 180.0;
+const kWidthSales = 190.0;
+const kHeightSales = 100.0;
+const kCategoryStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+  color: Colors.white
+);
 

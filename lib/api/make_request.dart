@@ -31,42 +31,55 @@ Future<Map<String, dynamic>> getProductsApi(BuildContext context) async{
   }
 }
 
-Future<List<CardCarroselProducts>> getAllProducts(BuildContext context, bool isSale) async{
-  var url = Uri.https('dummyjson.com', 'products');
-  var response = await makeGetRequest(url.toString(), {});
+// Future<List<CardCarroselProducts>> getAllProducts(BuildContext context, bool isSale) async{
+//   var url = Uri.https('dummyjson.com', 'products');
+//   var response = await makeGetRequest(url.toString(), {});
+//
+//   if(response.statusCode == 200){
+//     Map <String, dynamic> products = await jsonDecode(response.body);
+//     final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, isSale);
+//     return copy;
+//   }else{
+//     handleAPIError(context, response);
+//     final List<CardCarroselProducts> copy = [];
+//     return copy;
+//   }
+// }
 
+// Future<List<CardCarroselProducts>> getProductsCategory(BuildContext context, String category) async{
+//   var url = Uri.https('dummyjson.com', 'products/category/$category');
+//   var response = await makeGetRequest(url.toString(), {});
+//
+//   if(response.statusCode == 200){
+//     Map <String, dynamic> products = await jsonDecode(response.body);
+//     final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, false);
+//     return copy;
+//   }else{
+//     handleAPIError(context, response);
+//     final List<CardCarroselProducts> copy = [];
+//     return copy;
+//   }
+// }
+
+// Future<List<CardCarroselProducts>> getSearchProducts(BuildContext context, String search) async{
+//   final response = await makeGetRequest('https://dummyjson.com/products/search?q=$search', {});
+//
+//   if(response.statusCode == 200){
+//     Map <String, dynamic> products = await jsonDecode(response.body);
+//     final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, false);
+//     return copy;
+//   }else{
+//     handleAPIError(context, response);
+//     final List<CardCarroselProducts> copy = [];
+//     return copy;
+//   }
+// }
+
+Future<List<CardCarroselProducts>> getProducts(BuildContext context, String adress, bool isSale) async{
+  final response = await makeGetRequest(adress, {});
   if(response.statusCode == 200){
     Map <String, dynamic> products = await jsonDecode(response.body);
     final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, isSale);
-    return copy;
-  }else{
-    handleAPIError(context, response);
-    final List<CardCarroselProducts> copy = [];
-    return copy;
-  }
-}
-
-Future<List<CardCarroselProducts>> getProductsCategory(BuildContext context, String category) async{
-  var url = Uri.https('dummyjson.com', 'products/category/$category');
-  var response = await makeGetRequest(url.toString(), {});
-
-  if(response.statusCode == 200){
-    Map <String, dynamic> products = await jsonDecode(response.body);
-    final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, false);
-    return copy;
-  }else{
-    handleAPIError(context, response);
-    final List<CardCarroselProducts> copy = [];
-    return copy;
-  }
-}
-
-Future<List<CardCarroselProducts>> getSearchProducts(BuildContext context, String search) async{
-  final response = await makeGetRequest('https://dummyjson.com/products/search?q=$search', {});
-
-  if(response.statusCode == 200){
-    Map <String, dynamic> products = await jsonDecode(response.body);
-    final List<CardCarroselProducts> copy = await ConvertJsonCard.convertJsonProducts(products, false);
     return copy;
   }else{
     handleAPIError(context, response);

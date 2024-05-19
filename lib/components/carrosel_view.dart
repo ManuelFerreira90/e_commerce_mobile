@@ -34,7 +34,7 @@ class CarrosselView extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => SearchPage(
-                  choiceView: isSale! ? 2 : 1,
+                  choiceView: 1,
                   isSale: isSale!,
                 ),
               ),
@@ -60,6 +60,7 @@ class CarrosselView extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: cards?.length == 0 ||
                 cardsProducts?.length == 0 ?
             List.generate(3, (_) => const PlaceholderCard()) :

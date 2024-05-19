@@ -24,6 +24,13 @@ class CardCarroselProducts extends StatefulWidget {
 }
 
 class _CardCarroselProductsState extends State<CardCarroselProducts> {
+  double discount = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -68,10 +75,7 @@ class _CardCarroselProductsState extends State<CardCarroselProducts> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Text(
-                              widget.product.discountPercentage!
-                                      .toInt()
-                                      .toString() +
-                                  '% OFF',
+                              '${(widget.product.discountPercentage)} % OFF',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.0,

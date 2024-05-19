@@ -79,7 +79,6 @@ class ConvertJsonCard {
     List<CardCarroselProducts> cards = [];
     try {
       final productList = products['products'] as List<dynamic>;
-      print('productList: $productList');
       for (var product in productList) {
         cards.add(CardCarroselProducts(
           isSale: isSale,

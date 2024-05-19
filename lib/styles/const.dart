@@ -27,4 +27,6 @@ const kCategoryStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.white
 );
+const kLimit = 30;
+const kSkip = 30;
 

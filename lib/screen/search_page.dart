@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:flutter/material.dart';
 import '../components/card_carrosel_products.dart';
@@ -13,7 +15,7 @@ class SearchPage extends StatefulWidget {
     this.search,
   });
 
-  final int choiceView;
+  int choiceView;
   final String? category;
   bool? isSale;
   String? search;
@@ -25,18 +27,31 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _searchController;
   List<CardCarroselProducts> products = [];
+  final loading = ValueNotifier(false);
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _scrollController = ScrollController();
+    _scrollController.addListener(infinityScroll);
     fetchApi();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  infinityScroll() async{
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !loading.value) {
+      loading.value = true;
+      await _fetchMoreProducts();
+      loading.value = false;
+    }
   }
 
   @override
@@ -48,7 +63,8 @@ class _SearchPageState extends State<SearchPage> {
           margin: const EdgeInsets.only(left: 15),
           child: AnimSearchBar(
             onSubmitted: (value) {
-              _serachProducts(value);
+              widget.search = value;
+              _searchProducts(value);
             },
             width: 400,
             textController: _searchController,
@@ -93,50 +109,119 @@ class _SearchPageState extends State<SearchPage> {
         child: CircularProgressIndicator(
           color: kColorSlider,
         ),
-      ) : ListView(
+      ) : Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Wrap(
-                alignment: WrapAlignment.start,
-                children: products,
+          ListView(
+          controller: _scrollController,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  children: products,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        ValueListenableBuilder(
+          valueListenable: loading,
+          builder: (context, bool isLoading, _) {
+            return (isLoading)
+                ? const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: CircularProgressIndicator(
+                        color: kColorSlider,
+                      ),
+                    ),
+                  )
+                : const SizedBox();
+          },
+        ),
+        ]
       ),
     );
   }
 
+
+
   fetchApi() async{
     switch(widget.choiceView){
       case 0: // products category
-        final List<CardCarroselProducts> copy = await getProductsCategory(context, widget.category!);
+        final List<CardCarroselProducts> copy = await getProducts(
+            context,
+            'https://dummyjson.com/products/category/${widget.category}',
+            widget.isSale ?? false,
+        );
         setState(() {
           products = copy;
         });
         break;
       case 1:
-        final List<CardCarroselProducts> copy = await getAllProducts(context, widget.isSale!);
+        final List<CardCarroselProducts> copy = await getProducts(
+            context,
+            'https://dummyjson.com/products',
+            widget.isSale!
+        );
         setState(() {
           products = copy;
         });
         break;
-      case 2:
-        final List<CardCarroselProducts> copy = await getAllProducts(context, widget.isSale!);
-        setState(() {
-          products = copy;
-        });
-        break;
+      // case 2:
+      //   final List<CardCarroselProducts> copy = await getProducts(
+      //       context,
+      //       'https://dummyjson.com/products',
+      //       widget.isSale!
+      //   );
+      //   setState(() {
+      //     products = copy;
+      //   });
+      //  break;
       case 3:
-        _serachProducts(widget.search!);
+        _searchProducts(widget.search!);
         break;
     }
   }
 
-  _serachProducts(String search) async{
-    final List<CardCarroselProducts> copy = await getSearchProducts(context, search);
+  _fetchMoreProducts() async{
+    if(products.length < 100 && products.length >= 30){
+      List<CardCarroselProducts> copyMore = [];
+      switch(widget.choiceView){
+        case 0:
+            copyMore = await getProducts(
+              context,
+              'https://dummyjson.com/products/category/${widget.category}?limit=$kLimit&skip=${products.length}',
+              widget.isSale ?? false,
+            );
+          break;
+        case 1:
+            copyMore = await getProducts(
+              context,
+              'https://dummyjson.com/products?limit=$kLimit&skip=${products.length}',
+              widget.isSale ?? false,
+            );
+          break;
+        case 3:
+            copyMore = await getProducts(
+              context,
+              'https://dummyjson.com/products/search?q=${widget.search}&limit=$kLimit&skip=${products.length}',
+              widget.isSale ?? false,
+            );
+          break;
+      }
+      setState(() {
+        products.addAll(copyMore);
+      });
+    }
+  }
+
+  _searchProducts(String search) async{
+    final List<CardCarroselProducts> copy = await getProducts(context,
+      'https://dummyjson.com/products/search?q=$search',
+      false);
     setState(() {
       products = copy;
     });

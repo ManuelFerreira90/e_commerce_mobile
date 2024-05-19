@@ -28,8 +28,8 @@ class Product{
   String? get title => _title;
   String? get description => _description;
   int? get price => _price;
-  double? get discountPercentage => _discountPercentage;
-  double? get rating => _rating;
+  dynamic get discountPercentage => _discountPercentage;
+  dynamic get rating => _rating;
   int? get stock => _stock;
   String? get brand => _brand;
   String? get category => _category;

@@ -75,6 +75,37 @@ class ConvertJsonCard {
     return cardsMap;
   }
 
+  static List<CardCarroselProducts> convertJsonProducts(Map<String, dynamic> products, bool isSale) {
+    List<CardCarroselProducts> cards = [];
+    try {
+      final productList = products['products'] as List<dynamic>;
+      print('productList: $productList');
+      for (var product in productList) {
+        cards.add(CardCarroselProducts(
+          isSale: isSale,
+          product: Product(
+            product['id'],
+            product['title'],
+            product['description'],
+            product['price'],
+            product['discountPercentage'],
+            product['rating'],
+            product['stock'],
+            product['brand'],
+            product['category'],
+            product['thumbnail'],
+            product['images'],
+          ),
+          width: kWidthSales,
+          height: kHeightSales,
+        ));
+      }
+    } catch (error) {
+      print('Error parsing products: $error');
+      // Handle the error appropriately (e.g., show a loading indicator)
+    }
+    return cards;
+  }
 
   static List<CardCarrosel> convertJsonCategories(List<dynamic> categories) {
     List<CardCarrosel> cards = [];

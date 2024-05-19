@@ -1,5 +1,6 @@
 import 'package:e_commerce_mobile/screen/check_page.dart';
 import 'package:e_commerce_mobile/screen/home_page.dart';
+import 'package:e_commerce_mobile/screen/wrap_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       theme: lightTheme,
-      home: const HomePage(),
+      home: WrapPage(),
     );
   }
 }

@@ -12,11 +12,11 @@ import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
 import 'package:e_commerce_mobile/components/card_carrosel.dart';
-import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -30,79 +30,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late TextEditingController _searchController;
   List<BannerModel> listBanners = [];
   List<CardCarroselProducts> salesCard = [];
   List<CardCarroselProducts> allProductsCard = [];
   List<CardCarrosel> cards = [];
   Map<String, dynamic> cardMap = {};
 
+
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController();
     fetchApi();
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        //backgroundColor: Colors.white,
-        toolbarHeight: 80,
-        leadingWidth: 300,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 15),
-          child: AnimSearchBar(
-            onSubmitted: (value) {
-              print(value);
-            },
-            width: 400,
-            textController: _searchController,
-            onSuffixTap: () {
-              setState(() {
-                _searchController.clear();
-              });
-            },
-          ),
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              radius: 25.0,
-              onBackgroundImageError: (_, __) => IconButton(
-                icon: const Icon(Icons.person),
-                onPressed: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => ProfilePage(
-                  //         userLogged: widget.userLogged,
-                  //       ),
-                  //     ),
-                  //   );
-                  //
-                },
-              ),
-              backgroundImage: NetworkImage(
-                '',
-                scale: 10, // Adjust the scale as needed
-              ),
-              // backgroundImage: NetworkImage(
-              //   widget.userLogged.image ?? '',
-              // ),
-            ),
-          ),
-        ],
-      ),
-      body: Container(
+    return Container(
         //color: Colors.white,
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -121,44 +69,22 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             CarrosselView(
-              cardsWithDiscount: salesCard,
+              cardsProducts: salesCard,
               title: 'Sales',
               width: kWidthSales,
-              height: kHeightSales
+              height: kHeightSales,
+              isSale: true,
             ),
             const SizedBox(height: 20),
             CarrosselView(
-                cardsWithDiscount: allProductsCard,
+                cardsProducts: allProductsCard,
                 title: 'All Products',
                 width: kWidthSales,
-                height: kHeightSales
+                height: kHeightSales,
+                isSale: false,
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.home),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.search),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.shopping_cart),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.person),
-            ),
-          ],
-        ),
-      ),
     );
   }
   

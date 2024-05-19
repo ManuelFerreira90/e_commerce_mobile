@@ -17,10 +17,10 @@ const kTitlesStyle = TextStyle(
   color: Colors.white,
 );
 const kColorSlider = Colors.lime;
-const kColorPrimary = Colors.black12;
+const kColorPrimary = Colors.black;
 const kWidthCategories = 100.0;
 const kHeightCategories = 100.0;
-const kWidthSales = 200.0;
+const kWidthSales = 180.0;
 const kHeightSales = 100.0;
 const kCategoryStyle = TextStyle(
   fontSize: 14,

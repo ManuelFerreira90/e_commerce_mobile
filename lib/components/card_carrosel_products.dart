@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../styles/const.dart';
+import '../database/db.dart';
 
 class CardCarroselProducts extends StatefulWidget {
   CardCarroselProducts({
@@ -11,12 +12,13 @@ class CardCarroselProducts extends StatefulWidget {
     required this.height,
     required this.product,
     required this.isSale,
+    required this.ssn,
   });
 
+  final String ssn;
   final Product product;
   final double width;
   final double height;
-  bool isFavorite = false;
   final bool isSale;
 
   @override
@@ -24,7 +26,6 @@ class CardCarroselProducts extends StatefulWidget {
 }
 
 class _CardCarroselProductsState extends State<CardCarroselProducts> {
-  double discount = 0.0;
 
   @override
   void initState() {
@@ -101,30 +102,6 @@ class _CardCarroselProductsState extends State<CardCarroselProducts> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    right: 0.0,
-                    top: 50.0,
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      onPressed: () {
-                        setState(() {
-                          widget.isFavorite = !widget.isFavorite;
-                        });
-                      },
-                      icon: Icon(
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 10.0,
-                          ),
-                        ],
-                        widget.isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border_outlined,
-                        color: widget.isFavorite ? Colors.red : Colors.white,
-                      ),
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -155,10 +132,19 @@ class _CardCarroselProductsState extends State<CardCarroselProducts> {
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
+                          onPressed: () async{
+                            final bool isExist = await DB.instance.existCart(widget.product.id!, widget.ssn);
+                            if(isExist){
+                              final int quantity = await DB.instance.countProductCart(widget.ssn, widget.product.id!);
+                              await DB.instance.updateCart(widget.product.id!, widget.ssn, (quantity + 1));
+                            }else{
+                              await DB.instance.createProductCart(widget.product.id!, widget.ssn);
+                            }
+                          },
+                          icon: const Icon(
                               color: Colors.black,
-                              Icons.shopping_cart_outlined)),
+                              Icons.shopping_cart_outlined)
+                          ),
                     ),
                   ],
                 ),

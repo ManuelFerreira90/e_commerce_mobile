@@ -14,8 +14,10 @@ class CarrosselView extends StatelessWidget {
     this.cards,
     this.cardsProducts,
     this.isSale,
+    required this.ssn,
   });
 
+  final String ssn;
   final String title;
   final double width;
   final double height;
@@ -36,6 +38,7 @@ class CarrosselView extends StatelessWidget {
                 builder: (context) => SearchPage(
                   choiceView: 1,
                   isSale: isSale!,
+                  ssn: ssn,
                 ),
               ),
             );

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       theme: lightTheme,
-      home: WrapPage(),
+      home: CheckPage(),
     );
   }
 }

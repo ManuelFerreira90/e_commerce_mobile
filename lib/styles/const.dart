@@ -3,10 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 const kTitleTextStyle = TextStyle(
   fontSize: 24,
+  color: Colors.white,
 );
 const kLabelTextStyle = TextStyle(
   fontSize: 14,
   color: Colors.grey
+);
+const kFormTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
 );
 const kSpaceWidth = SizedBox(width: 20);
 const kSpaceHeight = SizedBox(height: 20);

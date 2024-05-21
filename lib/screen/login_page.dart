@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _userNameController,
                 keyboardType: TextInputType.name,
+                style: kFormTextStyle,
                 decoration: const InputDecoration(
                   labelText: 'User Name',
                   labelStyle: kLabelTextStyle,
@@ -71,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _passwordController,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: isNotVisibility,
+                style: kFormTextStyle,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   labelStyle: kLabelTextStyle,

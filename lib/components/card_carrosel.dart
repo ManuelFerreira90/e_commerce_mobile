@@ -8,8 +8,10 @@ class CardCarrosel extends StatelessWidget {
     required this.width,
     required this.height,
     required this.title,
+    required this.ssn,
   });
 
+  final String ssn;
   final String title;
   final double width;
   final double height;
@@ -18,7 +20,7 @@ class CardCarrosel extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(choiceView: 0, category: title)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(ssn: ssn,choiceView: 0, category: title)));
       },
       child: Card(
         elevation: 5.0,

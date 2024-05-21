@@ -7,80 +7,63 @@ import '../models/product.dart';
 const maxDiscountedProducts = 5;
 
 class ConvertJsonCard {
-  static Map<String, dynamic> convertJsonCard(Map<String, dynamic> products) {
-    final Map<String, dynamic> cardsMap = {};
-    final List<CardCarroselProducts> cardsSale = [];
-    final List<CardCarroselProducts> cardsAllProducts = [];
+  static List<BannerModel> convertJsonBanners(List<dynamic> products) {
     List<BannerModel> listBanners = [];
     try {
-      final productList = products['products'] as List<dynamic>;
-      final allProductList = products['products'] as List<dynamic>;
-
-      for (var i=0; i < allProductList.length && i < maxDiscountedProducts; i++) {
-        final productAll = allProductList[i];
-        final BannerModel banner = BannerModel(
-          id: productAll['id'].toString(),
-          imagePath: productAll['thumbnail'].toString(),
-        );
-        listBanners.add(banner);
-        cardsAllProducts.add(CardCarroselProducts(
-          isSale: false,
-          product: Product(
-            productAll['id'],
-            productAll['title'],
-            productAll['description'],
-            productAll['price'],
-            productAll['discountPercentage'],
-            productAll['rating'],
-            productAll['stock'],
-            productAll['brand'],
-            productAll['category'],
-            productAll['thumbnail'],
-            productAll['images'],
-          ),
-          width: kWidthSales,
-          height: kHeightSales,
-        ));
-      }
-
-      productList.sort((a, b) => (b['discountPercentage'] as num).compareTo(a['discountPercentage'] as num));
+      final productList = products;
       for (var i = 0; i < productList.length && i < maxDiscountedProducts; i++) {
         final product = productList[i];
-        cardsSale.add(CardCarroselProducts(
-          isSale: true,
-          product: Product(
-            product['id'],
-            product['title'],
-            product['description'],
-            product['price'],
-            product['discountPercentage'],
-            product['rating'],
-            product['stock'],
-            product['brand'],
-            product['category'],
-            product['thumbnail'],
-            product['images'],
-          ),
-          width: kWidthSales,
-          height: kHeightSales,
+        listBanners.add(BannerModel(
+          id: product['id'].toString(),
+          imagePath: product['thumbnail'].toString(),
         ));
       }
     } catch (error) {
-      print('Erro ao analisar produtos: $error');
-      // Trate o erro adequadamente (por exemplo, exiba um indicador de carregamento)
+      print('Error parsing banners: $error');
+      // Handle the error appropriately (e.g., show a loading indicator)
     }
-    cardsMap['sales'] = cardsSale;
-    cardsMap['allProducts'] = cardsAllProducts;
-    cardsMap['url'] = listBanners;
-    return cardsMap;
+    return listBanners;
   }
 
-  static List<CardCarroselProducts> convertJsonProducts(Map<String, dynamic> products, bool isSale) {
+  static List<CardCarroselProducts> convertJsonOneProduct(Map<String, dynamic> products, String ssn) {
     List<CardCarroselProducts> cards = [];
     try {
-      final productList = products['products'] as List<dynamic>;
-      for (var product in productList) {
+      final product = products;
+      print(product);
+      cards.add(CardCarroselProducts(
+        ssn: ssn,
+        isSale: false,
+        product: Product(
+          product['id'],
+          product['title'],
+          product['description'],
+          product['price'],
+          product['discountPercentage'],
+          product['rating'],
+          product['stock'],
+          product['brand'],
+          product['category'],
+          product['thumbnail'],
+          product['images'],
+        ),
+        width: kWidthSales,
+        height: kHeightSales,
+      ));
+    } catch (error) {
+      print('Error parsing products: $error');
+      // Handle the error appropriately (e.g., show a loading indicator)
+    }
+    return cards;
+  }
+
+  static List<CardCarroselProducts> convertJsonProducts(List<dynamic> products, bool isSale, int limit, String ssn) {
+    List<CardCarroselProducts> cards = [];
+    try {
+      final productList = products;
+      for (var i = 0; i < productList.length && i < limit; i++) {
+        final product = productList[i];
         cards.add(CardCarroselProducts(
+          ssn: ssn,
           isSale: isSale,
           product: Product(
             product['id'],
@@ -106,11 +89,12 @@ class ConvertJsonCard {
     return cards;
   }
 
-  static List<CardCarrosel> convertJsonCategories(List<dynamic> categories) {
+  static List<CardCarrosel> convertJsonCategories(List<dynamic> categories, String ssn) {
     List<CardCarrosel> cards = [];
     try {
       for (var category in categories) {
         cards.add(CardCarrosel(
+          ssn: ssn,
           title: category,
           width: kWidthCategories,
           height: kHeightCategories,

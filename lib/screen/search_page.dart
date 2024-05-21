@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:e_commerce_mobile/api/make_request.dart';
+import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../components/card_carrosel_products.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
@@ -13,8 +14,10 @@ class SearchPage extends StatefulWidget {
     this.category,
     this.isSale,
     this.search,
+    required this.ssn,
   });
 
+  final String ssn;
   int choiceView;
   final String? category;
   bool? isSale;
@@ -26,9 +29,10 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _searchController;
-  List<CardCarroselProducts> products = [];
+  List<CardCarroselProducts> productsCards = [];
   final loading = ValueNotifier(false);
   late final ScrollController _scrollController;
+  late List<dynamic> products = [];
 
   @override
   void initState() {
@@ -62,9 +66,13 @@ class _SearchPageState extends State<SearchPage> {
         title: Container(
           margin: const EdgeInsets.only(left: 15),
           child: AnimSearchBar(
-            onSubmitted: (value) {
+            onSubmitted: (value) async{
               widget.search = value;
-              _searchProducts(value);
+              products = await _searchProducts(value);
+              final List<CardCarroselProducts> copyProducts = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
+              setState(() {
+                productsCards = copyProducts;
+              });
             },
             width: 400,
             textController: _searchController,
@@ -105,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
-      body: products.isEmpty ? const Center(
+      body: productsCards.isEmpty ? const Center(
         child: CircularProgressIndicator(
           color: kColorSlider,
         ),
@@ -119,111 +127,102 @@ class _SearchPageState extends State<SearchPage> {
               child: Center(
                 child: Wrap(
                   alignment: WrapAlignment.start,
-                  children: products,
+                  children: productsCards,
                 ),
               ),
             ),
           ],
         ),
-        ValueListenableBuilder(
-          valueListenable: loading,
-          builder: (context, bool isLoading, _) {
-            return (isLoading)
-                ? const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: CircularProgressIndicator(
-                        color: kColorSlider,
-                      ),
-                    ),
-                  )
-                : const SizedBox();
-          },
-        ),
+          loadingIndicatorWidget(),
         ]
       ),
     );
   }
 
-
-
   fetchApi() async{
     switch(widget.choiceView){
-      case 0: // products category
-        final List<CardCarroselProducts> copy = await getProducts(
+      case 0:
+        products = await getProducts(
             context,
             'https://dummyjson.com/products/category/${widget.category}',
-            widget.isSale ?? false,
         );
-        setState(() {
-          products = copy;
-        });
         break;
       case 1:
-        final List<CardCarroselProducts> copy = await getProducts(
+        products = await getProducts(
             context,
             'https://dummyjson.com/products',
-            widget.isSale!
         );
-        setState(() {
-          products = copy;
-        });
         break;
-      // case 2:
-      //   final List<CardCarroselProducts> copy = await getProducts(
-      //       context,
-      //       'https://dummyjson.com/products',
-      //       widget.isSale!
-      //   );
-      //   setState(() {
-      //     products = copy;
-      //   });
-      //  break;
+      case 2:
+        products = await getProducts(
+            context,
+            'https://dummyjson.com/products',
+        );
+       break;
       case 3:
-        _searchProducts(widget.search!);
+        products = await _searchProducts(widget.search!);
         break;
     }
+    final List<CardCarroselProducts> copyProducts = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
+    setState(() {
+      productsCards = copyProducts;
+    });
   }
 
   _fetchMoreProducts() async{
     if(products.length < 100 && products.length >= 30){
-      List<CardCarroselProducts> copyMore = [];
       switch(widget.choiceView){
         case 0:
-            copyMore = await getProducts(
+          products = await getProducts(
               context,
               'https://dummyjson.com/products/category/${widget.category}?limit=$kLimit&skip=${products.length}',
-              widget.isSale ?? false,
             );
           break;
         case 1:
-            copyMore = await getProducts(
+          products = await getProducts(
               context,
               'https://dummyjson.com/products?limit=$kLimit&skip=${products.length}',
-              widget.isSale ?? false,
             );
           break;
         case 3:
-            copyMore = await getProducts(
+          products = await getProducts(
               context,
               'https://dummyjson.com/products/search?q=${widget.search}&limit=$kLimit&skip=${products.length}',
-              widget.isSale ?? false,
             );
           break;
       }
+      final List<CardCarroselProducts> copyMore = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
       setState(() {
-        products.addAll(copyMore);
+        productsCards.addAll(copyMore);
       });
     }
   }
 
-  _searchProducts(String search) async{
-    final List<CardCarroselProducts> copy = await getProducts(context,
+  Future<List<dynamic>> _searchProducts(String search) async{
+    final List<dynamic> copyProducts = await getProducts(context,
       'https://dummyjson.com/products/search?q=$search',
-      false);
-    setState(() {
-      products = copy;
-    });
+    );
+    return copyProducts;
+  }
+
+  loadingIndicatorWidget(){
+    return ValueListenableBuilder(
+        valueListenable: loading,
+        builder: (context, bool isLoading, _) {
+      return (isLoading)
+          ? const Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: CircularProgressIndicator(
+            color: kColorSlider,
+          ),
+        ),
+      )
+          : const SizedBox();
+    },
+    );
   }
 }
+
+

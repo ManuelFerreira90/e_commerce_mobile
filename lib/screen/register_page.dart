@@ -66,6 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: TextFormField(
                     controller: _nameController,
                     keyboardType: TextInputType.name,
+                    style: kFormTextStyle,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                       labelStyle: kLabelTextStyle,
@@ -83,6 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: TextFormField(
                     controller: _lastNameController,
                     keyboardType: TextInputType.name,
+                    style: kFormTextStyle,
                     decoration: const InputDecoration(
                       labelText: 'Last Name',
                       labelStyle: kLabelTextStyle,
@@ -100,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _userNameController,
               keyboardType: TextInputType.name,
+              style: kFormTextStyle,
               decoration: const InputDecoration(
                 labelText: 'User Name',
                 labelStyle: kLabelTextStyle,
@@ -114,6 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _phoneNumberController,
               keyboardType: TextInputType.phone,
+              style: kFormTextStyle,
               decoration: const InputDecoration(
                 labelText: 'Phone Number',
                 labelStyle: kLabelTextStyle,
@@ -134,6 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
+              style: kFormTextStyle,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 labelStyle: kLabelTextStyle,
@@ -155,6 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _passwordController,
               keyboardType: TextInputType.visiblePassword,
               obscureText: isNotVisibility,
+              style: kFormTextStyle,
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: kLabelTextStyle,
@@ -177,6 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _passwordConfirmController,
               keyboardType: TextInputType.visiblePassword,
+              style: kFormTextStyle,
               obscureText: isNotVisibility2,
               decoration: InputDecoration(
                 labelText: 'Confirm Password',

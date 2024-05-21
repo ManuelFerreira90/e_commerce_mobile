@@ -10,6 +10,7 @@ import 'package:e_commerce_mobile/screen/profile_page.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
+import 'package:e_commerce_mobile/utils/handle_products.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:banner_carousel/banner_carousel.dart';
@@ -21,20 +22,20 @@ import 'package:e_commerce_mobile/components/card_carrosel.dart';
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
-    //required this.userLogged,
+    required this.ssn,
   });
 
-  //final User userLogged;
+  final String ssn;
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<BannerModel> listBanners = [];
-  List<CardCarroselProducts> salesCard = [];
-  List<CardCarroselProducts> allProductsCard = [];
-  List<CardCarrosel> cards = [];
-  Map<String, dynamic> cardMap = {};
+  List<BannerModel> listBannersPreview = [];
+  List<CardCarroselProducts> salesCardPreview = [];
+  List<CardCarroselProducts> allProductsCardPreview = [];
+  List<CardCarrosel> cardsCategories = [];
 
 
   @override
@@ -58,18 +59,20 @@ class _HomePageState extends State<HomePage> {
             BannerCarousel(
               borderRadius: 30,
               activeColor: kColorSlider,
-              banners: listBanners
+              banners: listBannersPreview
             ),
             const SizedBox(height: 20),
             CarrosselView(
-              cards: cards,
+              ssn: widget.ssn,
+              cards: cardsCategories,
               title: 'Categories',
               width: kWidthCategories,
               height: kHeightCategories,
             ),
             const SizedBox(height: 20),
             CarrosselView(
-              cardsProducts: salesCard,
+              ssn: widget.ssn,
+              cardsProducts: salesCardPreview,
               title: 'Sales',
               width: kWidthSales,
               height: kHeightSales,
@@ -77,7 +80,8 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             CarrosselView(
-                cardsProducts: allProductsCard,
+                ssn: widget.ssn,
+                cardsProducts: allProductsCardPreview,
                 title: 'All Products',
                 width: kWidthSales,
                 height: kHeightSales,
@@ -89,16 +93,21 @@ class _HomePageState extends State<HomePage> {
   }
   
   fetchApi() async{
-    cardMap = await getProductsApi(context);
-    final List<CardCarrosel>copyCategories = await getCategoriesApi(context);
-
-    final BannerImages copyImages = BannerImages(listBanners: cardMap['url']);
+    final List<dynamic> products = await getProducts(
+        context,
+        'https://dummyjson.com/products',
+    );
+    final List<BannerModel> copyBanner = ConvertJsonCard.convertJsonBanners(products);
+    final List<CardCarrosel> copyCategories = await getCategoriesApi(context, widget.ssn);
+    final List<CardCarroselProducts> copyAllProducts = await ConvertJsonCard.convertJsonProducts(products, false, 10, widget.ssn);
+    final List<dynamic> orderedProductsDiscount = await HandleProducts.orderByDiscount(products);
+    final List<CardCarroselProducts> copySales = await ConvertJsonCard.convertJsonProducts(orderedProductsDiscount  , true, 10, widget.ssn);
 
     setState(() {
-      listBanners = copyImages.listBanners;
-      cards = copyCategories;
-      salesCard = cardMap['sales'];
-      allProductsCard = cardMap['allProducts'];
+      listBannersPreview = copyBanner;
+      cardsCategories = copyCategories;
+      salesCardPreview = copySales;
+      allProductsCardPreview = copyAllProducts;
     });
   }
 

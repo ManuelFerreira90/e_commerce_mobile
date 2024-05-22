@@ -1,3 +1,4 @@
+import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatefulWidget {
@@ -14,16 +15,16 @@ class _LoadingOverlayState extends State<LoadingOverlay> {
       children: [
         Positioned.fill(
           child: Container(
-            color: Colors.grey.withOpacity(0.6),
+            color: Colors.black,
           ),
         ),
-        Align(
+        const Align(
           alignment: Alignment.center,
           child: SizedBox(
             width: 50,
             height: 50,
             child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+              color: kColorSlider,
             ),
           ),
         ),

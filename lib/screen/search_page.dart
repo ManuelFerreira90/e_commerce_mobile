@@ -1,9 +1,11 @@
 import 'dart:ffi';
 
 import 'package:e_commerce_mobile/api/make_request.dart';
+import 'package:e_commerce_mobile/components/loading_overlay.dart';
+import 'package:e_commerce_mobile/screen/wrap_page.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
-import '../components/card_carrosel_products.dart';
+import '../components/card_carousel_products.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
 import '../styles/const.dart';
 
@@ -29,10 +31,12 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _searchController;
-  List<CardCarroselProducts> productsCards = [];
+  List<CardCarouselProducts> productsCards = [];
   final loading = ValueNotifier(false);
   late final ScrollController _scrollController;
   late List<dynamic> products = [];
+  int sizeProducts = 0;
+  bool isLoadingProducts = true;
 
   @override
   void initState() {
@@ -50,11 +54,15 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  infinityScroll() async{
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !loading.value) {
-      loading.value = true;
-      await _fetchMoreProducts();
-      loading.value = false;
+  infinityScroll() async {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !loading.value) {
+      if (sizeProducts < 100 && sizeProducts >= 30) {
+        loading.value = true;
+        await _fetchMoreProducts();
+        loading.value = false;
+      }
     }
   }
 
@@ -66,13 +74,8 @@ class _SearchPageState extends State<SearchPage> {
         title: Container(
           margin: const EdgeInsets.only(left: 15),
           child: AnimSearchBar(
-            onSubmitted: (value) async{
-              widget.search = value;
-              products = await _searchProducts(value);
-              final List<CardCarroselProducts> copyProducts = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
-              setState(() {
-                productsCards = copyProducts;
-              });
+            onSubmitted: (value) {
+              _onSubmitted(value);
             },
             width: 400,
             textController: _searchController,
@@ -83,146 +86,154 @@ class _SearchPageState extends State<SearchPage> {
             },
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              radius: 25.0,
-              onBackgroundImageError: (_, __) => IconButton(
-                icon: const Icon(Icons.person),
-                onPressed: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => ProfilePage(
-                  //         userLogged: widget.userLogged,
-                  //       ),
-                  //     ),
-                  //   );
-                  //
-                },
-              ),
-              backgroundImage: NetworkImage(
-                '',
-                scale: 10, // Adjust the scale as needed
-              ),
-              // backgroundImage: NetworkImage(
-              //   widget.userLogged.image ?? '',
-              // ),
-            ),
-          ),
-        ],
       ),
-      body: productsCards.isEmpty ? const Center(
-        child: CircularProgressIndicator(
-          color: kColorSlider,
-        ),
-      ) : Stack(
-        children: [
-          ListView(
-          controller: _scrollController,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  children: productsCards,
-                ),
+      body: isLoadingProducts
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: kColorSlider,
               ),
-            ),
-          ],
-        ),
-          loadingIndicatorWidget(),
-        ]
-      ),
+            )
+          : Stack(children: [
+              ListView(
+                controller: _scrollController,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        children: productsCards,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              loadingIndicatorWidget(),
+            ]),
     );
   }
 
-  fetchApi() async{
-    switch(widget.choiceView){
+  fetchApi() async {
+    setState(() {
+      isLoadingProducts = true;
+    });
+    switch (widget.choiceView) {
       case 0:
         products = await getProducts(
-            context,
-            'https://dummyjson.com/products/category/${widget.category}',
+          context,
+          'https://dummyjson.com/products/category/${widget.category}',
         );
         break;
       case 1:
         products = await getProducts(
-            context,
-            'https://dummyjson.com/products',
+          context,
+          'https://dummyjson.com/products',
         );
         break;
       case 2:
         products = await getProducts(
-            context,
-            'https://dummyjson.com/products',
+          context,
+          'https://dummyjson.com/products',
         );
-       break;
+        break;
       case 3:
         products = await _searchProducts(widget.search!);
         break;
     }
-    final List<CardCarroselProducts> copyProducts = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
+    final List<CardCarouselProducts> copyProducts =
+        await ConvertJsonCard.convertJsonProducts(
+            products, widget.isSale ?? false, products.length, widget.ssn);
+
+    sizeProducts = products.length;
     setState(() {
       productsCards = copyProducts;
+      isLoadingProducts = false;
     });
   }
 
-  _fetchMoreProducts() async{
-    if(products.length < 100 && products.length >= 30){
-      switch(widget.choiceView){
-        case 0:
-          products = await getProducts(
-              context,
-              'https://dummyjson.com/products/category/${widget.category}?limit=$kLimit&skip=${products.length}',
-            );
-          break;
-        case 1:
-          products = await getProducts(
-              context,
-              'https://dummyjson.com/products?limit=$kLimit&skip=${products.length}',
-            );
-          break;
-        case 3:
-          products = await getProducts(
-              context,
-              'https://dummyjson.com/products/search?q=${widget.search}&limit=$kLimit&skip=${products.length}',
-            );
-          break;
-      }
-      final List<CardCarroselProducts> copyMore = await ConvertJsonCard.convertJsonProducts(products, widget.isSale ?? false, 30, widget.ssn);
-      setState(() {
-        productsCards.addAll(copyMore);
-      });
+  _fetchMoreProducts() async {
+    switch (widget.choiceView) {
+      case 0:
+        products = await getProducts(
+          context,
+          'https://dummyjson.com/products/category/${widget.category}?limit=$kLimit&skip=$sizeProducts',
+        );
+        break;
+      case 1:
+        products = await getProducts(
+          context,
+          'https://dummyjson.com/products?limit=$kLimit&skip=$sizeProducts',
+        );
+        break;
+      case 3:
+        products = await getProducts(
+          context,
+          'https://dummyjson.com/products/search?q=${widget.search}&limit=$kLimit&skip=$sizeProducts',
+        );
+        break;
     }
+    sizeProducts += products.length;
+    final List<CardCarouselProducts> copyMore =
+        await ConvertJsonCard.convertJsonProducts(
+      products,
+      widget.isSale ?? false,
+      products.length,
+      widget.ssn,
+    );
+    setState(() {
+      productsCards.addAll(copyMore);
+    });
   }
 
-  Future<List<dynamic>> _searchProducts(String search) async{
-    final List<dynamic> copyProducts = await getProducts(context,
+  Future<List<dynamic>> _searchProducts(String search) async {
+    final List<dynamic> copyProducts = await getProducts(
+      context,
       'https://dummyjson.com/products/search?q=$search',
     );
     return copyProducts;
   }
 
-  loadingIndicatorWidget(){
+  loadingIndicatorWidget() {
     return ValueListenableBuilder(
-        valueListenable: loading,
-        builder: (context, bool isLoading, _) {
-      return (isLoading)
-          ? const Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: CircularProgressIndicator(
-            color: kColorSlider,
-          ),
-        ),
-      )
-          : const SizedBox();
-    },
+      valueListenable: loading,
+      builder: (context, bool isLoading, _) {
+        return (isLoading)
+            ? const Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: CircularProgressIndicator(
+                    color: kColorSlider,
+                  ),
+                ),
+              )
+            : const SizedBox();
+      },
     );
   }
+
+  _onSubmitted(String search) async {
+    setState(() {
+      isLoadingProducts = true;
+    });
+
+    widget.search = search;
+    products = await _searchProducts(search);
+    final List<CardCarouselProducts> copyProducts =
+        await ConvertJsonCard.convertJsonProducts(
+      products,
+      widget.isSale ?? false,
+      products.length,
+      widget.ssn,
+    );
+
+    sizeProducts = products.length;
+    setState(() {
+      productsCards = copyProducts;
+    });
+
+    setState(() {
+      isLoadingProducts = false;
+    });
+  }
 }
-
-

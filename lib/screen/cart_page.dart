@@ -1,7 +1,9 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
-import 'package:e_commerce_mobile/components/card_cart_page.dart';
+import 'package:e_commerce_mobile/components/card_product_cart.dart';
+import 'package:e_commerce_mobile/components/oval_button.dart';
+import 'package:e_commerce_mobile/database/db.dart';
+import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
-import '../components/card_carrosel_products.dart';
 import '../styles/const.dart';
 
 class CartPage extends StatefulWidget {
@@ -17,10 +19,10 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  List<CardCarroselProducts> cartProducts = [];
-  late List<dynamic> products;
+  List<CardProductCart> cartProducts = [];
+  late Map<String, dynamic> products;
   late ScrollController _scrollController;
-  final loading = ValueNotifier(false);
+  bool isLoading = false;
 
   @override
   void initState(){
@@ -37,59 +39,74 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // return cartProducts.isEmpty ? const Center(
-    //   child: CircularProgressIndicator(
-    //     color: kColorSlider,
-    //   ),
-    // ) :
-    // Stack(
-    //     children: [
-    //       ListView(
-    //         controller: _scrollController,
-    //         children: [
-    //           Padding(
-    //             padding: const EdgeInsets.all(8.0),
-    //             child: Center(
-    //               child: Wrap(
-    //                 alignment: WrapAlignment.start,
-    //                 children: cartProducts,
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //       loadingIndicatorWidget(),
-    //     ]
-    // );
-    return CardCartPage(
-      ssn: widget.ssn,
-      NumberProduct: 1,
-    );
-  }
+    return !isLoading ? const Center(
+      child: CircularProgressIndicator(
+        color: kColorSlider,
+      ),
+    ) : Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+            child: ListView(
+              controller: _scrollController,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Column(
+                      children: cartProducts,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                cartProducts.isEmpty ? const SizedBox.shrink() : OvalButton(
+                  function: () async{
+                    await DB.instance.deleteAllCart(widget.ssn);
+                    setState(() {
+                      cartProducts.clear();
+                    });
 
-  loadingIndicatorWidget(){
-    return ValueListenableBuilder(
-      valueListenable: loading,
-      builder: (context, bool isLoading, _) {
-        return (isLoading)
-            ? const Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: CircularProgressIndicator(
-              color: kColorSlider,
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('All products have been removed from the cart'),
+                      ),
+                    );
+                  },
+                  text: 'Remove all',
+                )
+              ],
             ),
           ),
-        )
-            : const SizedBox();
-      },
+
+        ]
     );
   }
 
-  fetchApi()async{
-    // products = await getProducts(
-    //     context,
-    //     'https://'
-    // )
+  removeCardProduct(int numberProduct){
+    setState(() {
+      cartProducts.removeWhere((element) => element.product.id == numberProduct);
+    });
+  }
+
+  fetchApi() async{
+    List<CardProductCart> copyCartProducts = [];
+
+    final List<String> cart = await DB.instance.readAllCart(widget.ssn);
+
+    for (var i = 0; i < cart.length; i++) {
+      products = await getOneProducts(
+          context,
+          'https://dummyjson.com/products/${cart[i]}'
+      );
+      final CardProductCart? cartProduct = ConvertJsonCard.convertJsonOneProductCart(products, widget.ssn, removeCardProduct);
+      if(cartProduct != null){
+        copyCartProducts.add(cartProduct);
+      }
+    }
+
+    setState(() {
+      cartProducts = copyCartProducts;
+      isLoading = true;
+    });
   }
 }

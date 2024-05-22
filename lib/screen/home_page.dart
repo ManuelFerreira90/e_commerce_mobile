@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:e_commerce_mobile/api/make_request.dart';
-import 'package:e_commerce_mobile/components/carrosel_view.dart';
+import 'package:e_commerce_mobile/components/carousel_view.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/models/banner_images.dart';
 import 'package:e_commerce_mobile/models/user.dart';
@@ -14,8 +14,8 @@ import 'package:e_commerce_mobile/utils/handle_products.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:banner_carousel/banner_carousel.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
-import 'package:e_commerce_mobile/components/card_carrosel.dart';
+import 'package:e_commerce_mobile/components/card_carousel_products.dart';
+import 'package:e_commerce_mobile/components/card_carousel.dart';
 
 
 
@@ -23,9 +23,11 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     required this.ssn,
+    required this.imageUser,
   });
 
   final String ssn;
+  final String imageUser;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,9 +35,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<BannerModel> listBannersPreview = [];
-  List<CardCarroselProducts> salesCardPreview = [];
-  List<CardCarroselProducts> allProductsCardPreview = [];
-  List<CardCarrosel> cardsCategories = [];
+  List<CardCarouselProducts> salesCardPreview = [];
+  List<CardCarouselProducts> allProductsCardPreview = [];
+  List<CardCarousel> cardsCategories = [];
+  List<CardCarouselProducts> popularCardPreview = [];
 
 
   @override
@@ -52,7 +55,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        //color: Colors.white,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -62,7 +64,7 @@ class _HomePageState extends State<HomePage> {
               banners: listBannersPreview
             ),
             const SizedBox(height: 20),
-            CarrosselView(
+            CarouselView(
               ssn: widget.ssn,
               cards: cardsCategories,
               title: 'Categories',
@@ -70,7 +72,7 @@ class _HomePageState extends State<HomePage> {
               height: kHeightCategories,
             ),
             const SizedBox(height: 20),
-            CarrosselView(
+            CarouselView(
               ssn: widget.ssn,
               cardsProducts: salesCardPreview,
               title: 'Sales',
@@ -79,7 +81,16 @@ class _HomePageState extends State<HomePage> {
               isSale: true,
             ),
             const SizedBox(height: 20),
-            CarrosselView(
+            CarouselView(
+              ssn: widget.ssn,
+              cardsProducts: popularCardPreview,
+              title: 'Popular',
+              width: kWidthSales,
+              height: kHeightSales,
+              isSale: false,
+            ),
+            const SizedBox(height: 20),
+            CarouselView(
                 ssn: widget.ssn,
                 cardsProducts: allProductsCardPreview,
                 title: 'All Products',
@@ -97,51 +108,46 @@ class _HomePageState extends State<HomePage> {
         context,
         'https://dummyjson.com/products',
     );
+
+
     final List<BannerModel> copyBanner = ConvertJsonCard.convertJsonBanners(products);
-    final List<CardCarrosel> copyCategories = await getCategoriesApi(context, widget.ssn);
-    final List<CardCarroselProducts> copyAllProducts = await ConvertJsonCard.convertJsonProducts(products, false, 10, widget.ssn);
+
+    final List<dynamic> categories = await getCategoriesApi(context);
+    final List<CardCarousel> copyCategories = await ConvertJsonCard.convertJsonCategories(
+        categories,
+        widget.ssn
+    );
+
+    final List<CardCarouselProducts> copyAllProducts = await ConvertJsonCard.convertJsonProducts(
+        products,
+        false,
+        10,
+        widget.ssn
+    );
+
+    final List<dynamic> orderedProductsRating = await HandleProducts.orderByRating(products);
+    final List<CardCarouselProducts> copyPopular = await ConvertJsonCard.convertJsonProducts(
+        orderedProductsRating,
+        false,
+        10,
+        widget.ssn
+    );
+
     final List<dynamic> orderedProductsDiscount = await HandleProducts.orderByDiscount(products);
-    final List<CardCarroselProducts> copySales = await ConvertJsonCard.convertJsonProducts(orderedProductsDiscount  , true, 10, widget.ssn);
+    final List<CardCarouselProducts> copySales = await ConvertJsonCard.convertJsonProducts(
+        orderedProductsDiscount,
+        true,
+        10,
+        widget.ssn,
+    );
 
     setState(() {
       listBannersPreview = copyBanner;
       cardsCategories = copyCategories;
       salesCardPreview = copySales;
       allProductsCardPreview = copyAllProducts;
+      popularCardPreview = copyPopular;
     });
-  }
-
-  logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CheckPage()),
-    );
-  }
-
-  Future<void> _confirmLogout() async {
-    return showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Logout'),
-            content: const Text('Are you sure you want to logout?'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    logout();
-                  },
-                  child: const Text('Cancel')),
-              TextButton(
-                  onPressed: () {
-                    logout();
-                  },
-                  child: const Text('Logout')),
-            ],
-          );
-        });
   }
 }
 

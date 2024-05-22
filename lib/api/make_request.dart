@@ -1,5 +1,5 @@
-import 'package:e_commerce_mobile/components/card_carrosel.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
+import 'package:e_commerce_mobile/components/card_carousel.dart';
+import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/models/product.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
@@ -105,17 +105,16 @@ Future<Map<String, dynamic>> getOneProducts(BuildContext context, String adress)
   }
 }
 
-Future<List<CardCarrosel>> getCategoriesApi(BuildContext context, String ssn) async{
+Future<List<dynamic>> getCategoriesApi(BuildContext context) async{
   var url = Uri.https('dummyjson.com', 'products/categories');
   var response = await makeGetRequest(url.toString(), {});
 
   if(response.statusCode == 200){
     List<dynamic> categories = await jsonDecode(response.body);
-    final List<CardCarrosel> copy = await ConvertJsonCard.convertJsonCategories(categories, ssn);
-    return copy;
+    return categories;
   }else{
     handleAPIError(context, response);
-    final List<CardCarrosel> copy = [];
-    return copy;
+    final List<dynamic> categories = [];
+    return categories;
   }
 }

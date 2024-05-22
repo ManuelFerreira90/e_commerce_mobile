@@ -1,9 +1,11 @@
+import 'package:e_commerce_mobile/components/profile_avatar.dart';
 import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/cart_page.dart';
 import 'package:e_commerce_mobile/screen/favorite_page.dart';
 import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:e_commerce_mobile/screen/profile_page.dart';
 import 'package:e_commerce_mobile/screen/search_page.dart';
+import 'package:e_commerce_mobile/screen/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
@@ -12,18 +14,19 @@ import 'dart:convert';
 import '../database/db.dart';
 
 class WrapPage extends StatefulWidget {
-  const WrapPage({
+  WrapPage({
     super.key,
     required this.userLogged,
   });
 
   final User userLogged;
+
   @override
   State<WrapPage> createState() => _WrapPageState();
 }
 
 class _WrapPageState extends State<WrapPage> {
-  var _currentIndex = 0;
+  int _currentIndex = 0;
   late TextEditingController _searchController;
   late List<String> favorite;
 
@@ -47,6 +50,7 @@ class _WrapPageState extends State<WrapPage> {
     switch (_currentIndex) {
       case 0:
         return HomePage(
+          imageUser: widget.userLogged.image!,
           ssn: widget.userLogged.ssn!,
         );
       case 1:
@@ -62,6 +66,30 @@ class _WrapPageState extends State<WrapPage> {
         return ProfilePage(userLogged: widget.userLogged);
       default:
         return null;
+    }
+  }
+
+  Widget _widgetAppBar(){
+    switch (_currentIndex) {
+      case 3:
+        return IconButton(
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(
+                    userLogged: widget.userLogged,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.settings_outlined, color: Colors.white,)
+        );
+      default:
+        return ProfileAvatar(
+            radius: 25.0,
+            imageProfile: widget.userLogged.image
+        );
     }
   }
 
@@ -98,63 +126,73 @@ class _WrapPageState extends State<WrapPage> {
       actions: [
         Container(
           margin: const EdgeInsets.only(right: 15),
-          child: CircleAvatar(
-            radius: 25.0,
-            onBackgroundImageError: (_, __) => IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => ProfilePage(
-                //         userLogged: widget.userLogged,
-                //       ),
-                //     ),
-                //   );
-                //
-              },
-            ),
-            backgroundImage: NetworkImage(
-              widget.userLogged.image ?? '',
-            ),
+          child: GestureDetector(
+            onTap: (){
+              setState(() {
+                _currentIndex = 3;
+              });
+            },
+            child: _widgetAppBar(),
           ),
         ),
       ],
     ),
       body: _renderBody(),
-      bottomNavigationBar: SalomonBottomBar(
-      currentIndex: _currentIndex,
-      onTap: (i) => setState(() => _currentIndex = i),
-      items: [
-        /// Home
-        SalomonBottomBarItem(
-          icon: Icon(Icons.home),
-          title: Text("Home"),
-          selectedColor: Colors.purple,
-        ),
-
-        /// Likes
-        SalomonBottomBarItem(
-          icon: Icon(Icons.favorite_border),
-          title: Text("Likes"),
-          selectedColor: Colors.pink,
-        ),
-
-        /// Cart
-        SalomonBottomBarItem(
-          icon: Icon(Icons.shopping_cart),
-          title: Text("Cart"),
-          selectedColor: Colors.blue,
-        ),
-
-        /// Profile
-        SalomonBottomBarItem(
-          icon: Icon(Icons.person),
-          title: Text("Profile"),
-          selectedColor: Colors.teal,
-        ),
-      ],
-    ),
+      bottomNavigationBar: SalomonBar(
+          setIndex: (i) => setState(() => _currentIndex = i),
+          currentIndex: _currentIndex
+      ),
     );
   }
 }
+
+class SalomonBar extends StatelessWidget {
+  const SalomonBar({
+    super.key,
+    required int currentIndex,
+    required this.setIndex,
+  }) : _currentIndex = currentIndex;
+
+  final int _currentIndex;
+  final Function setIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return SalomonBottomBar(
+    currentIndex: _currentIndex,
+    onTap: (i) => setIndex(i),
+    items: [
+
+      /// Home
+      SalomonBottomBarItem(
+        icon: const Icon(Icons.home),
+        title: const Text("Home"),
+        selectedColor: Colors.purple,
+      ),
+    
+      /// Likes
+      SalomonBottomBarItem(
+        icon: const Icon(Icons.favorite_border),
+        title: const Text("Likes"),
+        selectedColor: Colors.pink,
+      ),
+    
+      /// Cart
+      SalomonBottomBarItem(
+        icon: const Icon(Icons.shopping_cart),
+        title: const Text("Cart"),
+        selectedColor: Colors.blue,
+      ),
+    
+      /// Profile
+      SalomonBottomBarItem(
+        icon: const Icon(Icons.person),
+        title: const Text("Profile"),
+        selectedColor: Colors.teal,
+      ),
+    ],
+        );
+  }
+}
+
+

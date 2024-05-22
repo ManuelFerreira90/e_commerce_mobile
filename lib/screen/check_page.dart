@@ -64,16 +64,41 @@ class _CheckPageState extends State<CheckPage> {
         context,
         MaterialPageRoute(builder: (context) => WrapPage(
           userLogged: User(
-            perfil['ssn'] as String,
-            perfil['firstName'] as String,
-            perfil['lastName'] as String,
-            perfil['email'] as String,
-            perfil['image'] as String,
-            perfil['phone'] as String,
-            perfil['address'] as Map<String, dynamic>,
+            id: perfil['id'],
+            firstName: perfil['firstName'],
+            lastName: perfil['lastName'],
+            age: perfil['age'],
+            email: perfil['email'],
+            phone: perfil['phone'],
+            username: perfil['username'],
+            password: perfil['password'],
+            birthDate: DateTime.parse(perfil['birthDate']),
+            image: perfil['image'],
+            domain: perfil['domain'],
+            address: Address(
+              address: perfil['address']['address'],
+              city: perfil['address']['city'],
+              postalCode: perfil['address']['postalCode'],
+              state: perfil['address']['state'],
+            ),
+            university: perfil['university'],
+            bank: Bank(
+              cardExpire: perfil['bank']['cardExpire'],
+              cardNumber: perfil['bank']['cardNumber'],
+              cardType: perfil['bank']['cardType'],
+              currency: perfil['bank']['currency'],
+            ),
+            crypto: Crypto(
+              coin: perfil['crypto']['coin'],
+              wallet: perfil['crypto']['wallet'],
+              network: perfil['crypto']['network'],
+            ),
+            ssn: perfil['ssn'],
+            job: perfil['company']['title'],
           ),
-        )),
-      );
+        ),
+      )
+    );
     }else{
       handleAPIError(context, response);
       Navigator.push(

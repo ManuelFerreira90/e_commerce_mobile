@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
+import 'package:e_commerce_mobile/components/oval_button.dart';
 import 'package:e_commerce_mobile/screen/check_page.dart';
-import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:e_commerce_mobile/screen/register_page.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
@@ -41,79 +41,91 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('')),
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: kPadding,
-            children: [
-              const Text(
-                  'Login',
-                  textAlign: TextAlign.center,
-                  style: kTitleTextStyle,
+      appBar: AppBar(leading: const Text('')),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: kPadding,
+          children: [
+            const Icon(
+              Icons.shopping_bag_outlined,
+              size: 100,
+              color: Colors.lime,
+            ),
+            const Text(
+                'Login',
+                textAlign: TextAlign.center,
+                style: kTitleTextStyle,
+            ),
+            const SizedBox(height: 20,),
+            TextFormField(
+              controller: _userNameController,
+              keyboardType: TextInputType.name,
+              style: kFormTextStyle,
+              cursorColor: Colors.lime,
+              decoration: const InputDecoration(
+                labelText: 'User Name',
+                labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
               ),
-              TextFormField(
-                controller: _userNameController,
-                keyboardType: TextInputType.name,
-                style: kFormTextStyle,
-                decoration: const InputDecoration(
-                  labelText: 'User Name',
-                  labelStyle: kLabelTextStyle,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your user name';
+                }
+                return null;
+              },
+            ),
+            kSpaceHeight,
+            TextFormField(
+              controller: _passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: isNotVisibility,
+              style: kFormTextStyle,
+              cursorColor: Colors.lime,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
+                suffixIcon: IconButton(
+                    onPressed: (){
+                      setState(() {
+                        isNotVisibility = !isNotVisibility;
+                      });
+                    },
+                  icon: isNotVisibility ? const Icon(Icons.visibility, color: Colors.grey,) : const Icon(Icons.visibility_off, color: Colors.grey,),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your user name';
-                  }
-                  return null;
-                },
               ),
-              TextFormField(
-                controller: _passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: isNotVisibility,
-                style: kFormTextStyle,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: kLabelTextStyle,
-                  suffixIcon: IconButton(
-                      onPressed: (){
-                        setState(() {
-                          isNotVisibility = !isNotVisibility;
-                        });
-                      },
-                    icon: isNotVisibility ? const Icon(Icons.visibility, color: Colors.grey,) : const Icon(Icons.visibility_off, color: Colors.grey,),
-                  ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                return null;
+              },
+            ),
+            kSpaceHeight,
+            OvalButton(
+                function: (){
+                  if (_formKey.currentState!.validate()) {
+                    login();
+                  }
+                },
+                text: 'Login',
+            ),
+            const SizedBox(height: 5,),
+            OvalButton(
+              function: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const RegisterPage()
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              kSpaceHeight,
-              ElevatedButton(
-                  onPressed: (){
-                    if (_formKey.currentState!.validate()) {
-                      login();
-                    }
-                  },
-                  child: const Text('Login'),
-              ),
-              TextButton(
-                  onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const RegisterPage()
-                      ),
-                    );
-                  },
-                  child: const Text('Register')
-              ),
-            ]
-          ),
+              );
+            },
+              text: 'Register',
+            )
+          ]
         ),
       ),
     );

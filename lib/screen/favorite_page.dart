@@ -1,5 +1,5 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
+import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/database/db.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
@@ -18,66 +18,55 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List<CardCarroselProducts> favoriteProducts = [];
-  late ScrollController _scrollController;
-  final loading = ValueNotifier(false);
+  List<CardCarouselProducts> favoriteProducts = [];
+
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(infinityScroll);
     fetchApi();
   }
 
-  infinityScroll() async{
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !loading.value) {
-      loading.value = true;
-      //await _fetchMoreProducts();
-      loading.value = false;
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // return favoriteProducts.isEmpty ? const Center(
-    //   child: CircularProgressIndicator(
-    //     color: kColorSlider,
-    //   ),
-    // ) :
-    return Stack(
-        children: [
-          ListView(
-            controller: _scrollController,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    children: favoriteProducts,
-                  ),
-                ),
-              ),
-            ],
+    return favoriteProducts.isEmpty ? const Center(
+      child: CircularProgressIndicator(
+        color: kColorSlider,
+      ),
+    ) : ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              children: favoriteProducts,
+            ),
           ),
-          loadingIndicatorWidget(),
-        ]
+        ),
+      ],
     );
   }
 
   fetchApi() async {
     final List<String> favorite = await DB.instance.readAllFavorites(widget.ssn);
     Map<String, dynamic> products = {};
-    List<CardCarroselProducts> copyProducts = [];
+    List<CardCarouselProducts> copyProducts = [];
 
     for (var i = 0; i < favorite.length; i++) {
       products = await getOneProducts(
           context,
-          'https://dummyjson.com/products/4',
+          'https://dummyjson.com/products/${favorite[i]}',
       );
-      print(products);
-      copyProducts.addAll(ConvertJsonCard.convertJsonOneProduct(products, widget.ssn));
+      copyProducts.addAll(ConvertJsonCard.convertJsonOneProduct(
+          products,
+          widget.ssn)
+      );
     }
 
     setState(() {
@@ -85,22 +74,4 @@ class _FavoritePageState extends State<FavoritePage> {
     });
   }
 
-  loadingIndicatorWidget(){
-    return ValueListenableBuilder(
-      valueListenable: loading,
-      builder: (context, bool isLoading, _) {
-        return (isLoading)
-            ? const Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: CircularProgressIndicator(
-              color: kColorSlider,
-            ),
-          ),
-        )
-            : const SizedBox();
-      },
-    );
-  }
 }

@@ -1,12 +1,12 @@
-import 'package:e_commerce_mobile/components/card_carrosel.dart';
-import 'package:e_commerce_mobile/components/card_carrosel_products.dart';
+import 'package:e_commerce_mobile/components/card_carousel.dart';
+import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/components/placeholder_card.dart';
 import 'package:e_commerce_mobile/screen/search_page.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
 
-class CarrosselView extends StatelessWidget {
-  CarrosselView({
+class CarouselView extends StatelessWidget {
+  CarouselView({
     super.key,
     required this.title,
     required this.width,
@@ -21,8 +21,8 @@ class CarrosselView extends StatelessWidget {
   final String title;
   final double width;
   final double height;
-  final List<CardCarroselProducts>? cardsProducts;
-  final List<CardCarrosel>? cards;
+  final List<CardCarouselProducts>? cardsProducts;
+  final List<CardCarousel>? cards;
   final bool? isSale;
 
   @override

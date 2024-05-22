@@ -2,8 +2,8 @@ import 'package:e_commerce_mobile/screen/search_page.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
 
-class CardCarrosel extends StatelessWidget {
-  const CardCarrosel({
+class CardCarousel extends StatelessWidget {
+  const CardCarousel({
     super.key,
     required this.width,
     required this.height,
@@ -20,7 +20,11 @@ class CardCarrosel extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(ssn: ssn,choiceView: 0, category: title)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(
+            ssn: ssn,choiceView: 0,
+            category: title)
+        )
+        );
       },
       child: Card(
         elevation: 5.0,

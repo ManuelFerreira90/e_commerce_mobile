@@ -1,5 +1,6 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
+import 'package:e_commerce_mobile/components/oval_button.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
 import 'package:e_commerce_mobile/utils/prepare_resquest_body.dart';
@@ -60,6 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
           padding: kPadding,
           children: [
             const Text('Register', textAlign: TextAlign.center, style: kTitleTextStyle),
+            const SizedBox(height: 20,),
             Row(
               children: [
                 Expanded(
@@ -67,9 +69,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _nameController,
                     keyboardType: TextInputType.name,
                     style: kFormTextStyle,
+                    cursorColor: Colors.lime,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                       labelStyle: kLabelTextStyle,
+                      border: OutlineInputBorder(),
+                      focusedBorder: kOutlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -85,9 +90,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _lastNameController,
                     keyboardType: TextInputType.name,
                     style: kFormTextStyle,
+                    cursorColor: Colors.lime,
                     decoration: const InputDecoration(
                       labelText: 'Last Name',
                       labelStyle: kLabelTextStyle,
+                      border: OutlineInputBorder(),
+                      focusedBorder: kOutlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -99,13 +107,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ],
             ),
+            kSpaceHeight,
             TextFormField(
               controller: _userNameController,
               keyboardType: TextInputType.name,
               style: kFormTextStyle,
+              cursorColor: Colors.lime,
               decoration: const InputDecoration(
                 labelText: 'User Name',
                 labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -114,13 +126,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 return null;
               },
             ),
+            kSpaceHeight,
             TextFormField(
               controller: _phoneNumberController,
               keyboardType: TextInputType.phone,
               style: kFormTextStyle,
+              cursorColor: Colors.lime,
               decoration: const InputDecoration(
                 labelText: 'Phone Number',
                 labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -135,13 +151,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 }
               },
             ),
+            kSpaceHeight,
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               style: kFormTextStyle,
+              cursorColor: Colors.lime,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
               ),
               validator : (value) {
                 if (value == null || value.isEmpty) {
@@ -156,14 +176,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 return null;
               },
             ),
+            kSpaceHeight,
             TextFormField(
               controller: _passwordController,
               keyboardType: TextInputType.visiblePassword,
               obscureText: isNotVisibility,
               style: kFormTextStyle,
+              cursorColor: Colors.lime,
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
                 suffixIcon: IconButton(
                   onPressed: (){
                     setState(() {
@@ -180,14 +204,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 return null;
               },
             ),
+            kSpaceHeight,
             TextFormField(
               controller: _passwordConfirmController,
               keyboardType: TextInputType.visiblePassword,
               style: kFormTextStyle,
+              cursorColor: Colors.lime,
               obscureText: isNotVisibility2,
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
                 labelStyle: kLabelTextStyle,
+                border: OutlineInputBorder(),
+                focusedBorder: kOutlineInputBorder,
                 suffixIcon: IconButton(
                   onPressed: (){
                     setState(() {
@@ -207,14 +235,12 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
             kSpaceHeight,
-            ElevatedButton(
-                onPressed: (){
-                  if(_formKey.currentState!.validate()){
-                    register();
-                  }
-                },
-                child: const Text('Register'),
-            ),
+            OvalButton(
+              function: (){
+              if(_formKey.currentState!.validate()){
+                register();
+              }
+            }, text: 'Register',)
           ]
         ),
       ),

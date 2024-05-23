@@ -42,7 +42,7 @@ class _CardProductCartState extends State<CardProductCart> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 190,
       child: Card(
         color: kColorPrimary,

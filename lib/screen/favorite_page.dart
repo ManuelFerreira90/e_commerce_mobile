@@ -4,6 +4,7 @@ import 'package:e_commerce_mobile/database/db.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
+import '../utils/functions.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({
@@ -19,7 +20,7 @@ class FavoritePage extends StatefulWidget {
 
 class _FavoritePageState extends State<FavoritePage> {
   List<CardCarouselProducts> favoriteProducts = [];
-
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -34,43 +35,53 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return favoriteProducts.isEmpty ? const Center(
-      child: CircularProgressIndicator(
-        color: kColorSlider,
-      ),
-    ) : ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Wrap(
-              alignment: WrapAlignment.start,
-              children: favoriteProducts,
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: kColorSlider,
             ),
-          ),
-        ),
-      ],
-    );
+          )
+        : returnWidget(
+            ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    children: favoriteProducts,
+                  ),
+                ),
+              ],
+            ),
+            'No favorite products',
+            favoriteProducts,
+          );
+  }
+
+  removeProduct(int id){
+    setState(() {
+      favoriteProducts.removeWhere((element) => element.product.id == id);
+    });
   }
 
   fetchApi() async {
-    final List<String> favorite = await DB.instance.readAllFavorites(widget.ssn);
+    final List<String> favorite =
+        await DB.instance.readAllFavorites(widget.ssn);
     Map<String, dynamic> products = {};
     List<CardCarouselProducts> copyProducts = [];
 
     for (var i = 0; i < favorite.length; i++) {
       products = await getOneProducts(
-          context,
-          'https://dummyjson.com/products/${favorite[i]}',
+        context,
+        'https://dummyjson.com/products/${favorite[i]}',
       );
-      copyProducts.addAll(ConvertJsonCard.convertJsonOneProduct(
-          products,
-          widget.ssn)
-      );
+      copyProducts
+          .addAll(ConvertJsonCard.convertJsonOneProduct(products, widget.ssn, removeProduct));
     }
 
     setState(() {
       favoriteProducts = copyProducts;
+      isLoading = false;
     });
   }
 

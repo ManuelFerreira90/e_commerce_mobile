@@ -3,7 +3,7 @@ import '../styles/const.dart';
 
 
 class PlaceholderCard extends StatefulWidget {
-  const PlaceholderCard({Key? key}) : super(key: key);
+  const PlaceholderCard({super.key});
 
   @override
   _PlaceholderCardState createState() => _PlaceholderCardState();
@@ -40,7 +40,7 @@ class _PlaceholderCardState extends State<PlaceholderCard>
       ),
       child: FadeTransition(
         opacity: _opacityAnimation,
-        child: Center(
+        child: const Center(
           child: CircularProgressIndicator(
             color: kColorSlider,
           ),

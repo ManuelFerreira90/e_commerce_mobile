@@ -1,6 +1,5 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/models/user.dart';
-import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:e_commerce_mobile/screen/login_page.dart';
 import 'package:e_commerce_mobile/screen/wrap_page.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';

@@ -3,39 +3,37 @@ import 'package:e_commerce_mobile/components/discount_container.dart';
 import 'package:e_commerce_mobile/models/product.dart';
 import 'package:e_commerce_mobile/screen/detail_product.dart';
 import 'package:e_commerce_mobile/utils/functions.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import '../styles/const.dart';
 import '../database/db.dart';
 
 class CardCarouselProducts extends StatefulWidget {
-  const CardCarouselProducts({
-    super.key,
-    required this.width,
-    required this.height,
-    required this.product,
-    required this.isSale,
-    required this.ssn,
-  });
+  const CardCarouselProducts(
+      {super.key,
+      required this.width,
+      required this.height,
+      required this.product,
+      required this.isSale,
+      required this.ssn,
+      this.resetProduct});
 
   final String ssn;
   final Product product;
   final double width;
   final double height;
   final bool isSale;
+  final Function? resetProduct;
 
   @override
   State<CardCarouselProducts> createState() => _CardCarouselProductsState();
 }
 
 class _CardCarouselProductsState extends State<CardCarouselProducts> {
-
   @override
   void initState() {
     super.initState();
   }
-  
+
   _getPrice(Product product) {
     if (widget.isSale) {
       return calculateDiscount(widget.product);
@@ -47,20 +45,20 @@ class _CardCarouselProductsState extends State<CardCarouselProducts> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DetailProduct(
-                product: widget.product,
-                ssn: widget.ssn,
-                isSale: widget.isSale,
+              restarFavoriteProducts: widget.resetProduct,
+              product: widget.product,
+              ssn: widget.ssn,
+              isSale: widget.isSale,
             ),
           ),
         );
-
       },
-      child: Container(
+      child: SizedBox(
         width: widget.width,
         height: 260,
         child: Card(
@@ -74,7 +72,7 @@ class _CardCarouselProductsState extends State<CardCarouselProducts> {
                 Stack(
                   children: [
                     ClipRRect(
-                      borderRadius:  const BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0),
                         bottomRight: Radius.circular(10.0),
@@ -132,22 +130,26 @@ class _CardCarouselProductsState extends State<CardCarouselProducts> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                         child: IconButton(
-                            onPressed: () async{
-                              final bool isExist = await DB.instance.existCart(widget.product.id!, widget.ssn);
-                              if(isExist){
-                                final int quantity = await DB.instance.countProductCart(widget.ssn, widget.product.id!);
-                                await DB.instance.updateCart(widget.product.id!, widget.ssn, (quantity + 1));
-                              }else{
-                                await DB.instance.createProductCart(widget.product.id!, widget.ssn);
+                            onPressed: () async {
+                              final bool isExist = await DB.instance
+                                  .existCart(widget.product.id!, widget.ssn);
+                              if (isExist) {
+                                final int quantity = await DB.instance
+                                    .countProductCart(
+                                        widget.ssn, widget.product.id!);
+                                await DB.instance.updateCart(widget.product.id!,
+                                    widget.ssn, (quantity + 1));
+                              } else {
+                                await DB.instance.createProductCart(
+                                    widget.product.id!, widget.ssn);
                               }
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Product added to cart')
-                              ));
+                                  SnackBar(
+                                      content: Text('Product added to cart')));
                             },
                             icon: const Icon(
                                 color: Colors.black,
-                                Icons.shopping_cart_outlined)
-                            ),
+                                Icons.shopping_cart_outlined)),
                       ),
                     ],
                   ),
@@ -160,6 +162,3 @@ class _CardCarouselProductsState extends State<CardCarouselProducts> {
     );
   }
 }
-
-
-

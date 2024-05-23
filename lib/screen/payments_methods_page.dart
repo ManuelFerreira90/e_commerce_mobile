@@ -34,7 +34,7 @@ class _PaymentsMethodsPageState extends State<PaymentsMethodsPage> {
             doesSupportNfc: true,
             placeNfcIconAtTheEnd: true,
             cardType: CardType.debit,
-            cardProviderLogo: FlutterLogo(),
+            cardProviderLogo: const FlutterLogo(),
             cardProviderLogoPosition: CardProviderLogoPosition.right,
             enableFlipping: true,
             cvvNumber: '***',

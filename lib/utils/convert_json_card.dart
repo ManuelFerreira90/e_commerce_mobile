@@ -1,10 +1,11 @@
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:e_commerce_mobile/components/card_carousel.dart';
 import 'package:e_commerce_mobile/components/card_product_cart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../components/card_carousel_products.dart';
 import '../styles/const.dart';
 import '../models/product.dart';
+
 const maxDiscountedProducts = 5;
 
 class ConvertJsonCard {
@@ -20,17 +21,19 @@ class ConvertJsonCard {
         ));
       }
     } catch (error) {
-      print('Error parsing banners: $error');
-      // Handle the error appropriately (e.g., show a loading indicator)
+      if (kDebugMode) {
+        print('Error parsing categories: $error');
+      }
     }
     return listBanners;
   }
 
-  static List<CardCarouselProducts> convertJsonOneProduct(Map<String, dynamic> products, String ssn) {
+  static List<CardCarouselProducts> convertJsonOneProduct(Map<String, dynamic> products, String ssn, Function? remove) {
     List<CardCarouselProducts> cards = [];
     try {
       final product = products;
       cards.add(CardCarouselProducts(
+        resetProduct: remove,
         ssn: ssn,
         isSale: false,
         product: Product(
@@ -50,8 +53,9 @@ class ConvertJsonCard {
         height: kHeightSales,
       ));
     } catch (error) {
-      print('Error parsing products: $error');
-      // Handle the error appropriately (e.g., show a loading indicator)
+      if (kDebugMode) {
+        print('Error parsing categories: $error');
+      }
     }
     return cards;
   }
@@ -79,8 +83,9 @@ class ConvertJsonCard {
       );
       return card;
     } catch (error) {
-      print('Error parsing products: $error');
-      // Handle the error appropriately (e.g., show a loading indicator)
+      if (kDebugMode) {
+        print('Error parsing categories: $error');
+      }
     }
     return null;
   }
@@ -112,8 +117,9 @@ class ConvertJsonCard {
         ));
       }
     } catch (error) {
-      print('Error parsing products: $error');
-      // Handle the error appropriately (e.g., show a loading indicator)
+      if (kDebugMode) {
+        print('Error parsing categories: $error');
+      }
     }
     return cards;
   }
@@ -130,8 +136,9 @@ class ConvertJsonCard {
         ));
       }
     } catch (error) {
-      print('Error parsing categories: $error');
-      // Handle the error appropriately (e.g., show a loading indicator)
+      if (kDebugMode) {
+        print('Error parsing categories: $error');
+      }
     }
     return cards;
   }

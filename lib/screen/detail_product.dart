@@ -14,18 +14,20 @@ class DetailProduct extends StatefulWidget {
     required this.product,
     required this.ssn,
     this.isSale,
+    this.restarFavoriteProducts,
   });
 
   final Product product;
   final String ssn;
   final bool? isSale;
+  final Function? restarFavoriteProducts;
 
   @override
   State<DetailProduct> createState() => _DetailProductState();
 }
 
 class _DetailProductState extends State<DetailProduct> {
-  List<Container> Images = [];
+  List<Container> images = [];
   int _currentImageIndex = 0;
   bool isFavorite = false;
   late TextEditingController _searchController;
@@ -43,9 +45,10 @@ class _DetailProductState extends State<DetailProduct> {
     _searchController.dispose();
     super.dispose();
   }
-  
+
   _setIsFavorite() async {
-    final bool favorite = await DB.instance.existFavorite(widget.product.id!, widget.ssn);
+    final bool favorite =
+        await DB.instance.existFavorite(widget.product.id!, widget.ssn);
     setState(() {
       isFavorite = favorite;
     });
@@ -85,41 +88,55 @@ class _DetailProductState extends State<DetailProduct> {
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
         child: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    aspectRatio: 2.0,
-                    height: 300,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                    enlargeCenterPage: true,
-                    scrollDirection: Axis.horizontal,
-                      onPageChanged: (index, reason) => setState(() => _currentImageIndex = index),
-                  ),
-                  items: Images,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < widget.product.images!.length; i++)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    width: _currentImageIndex == i ? 8.0 : 6.0,
-                    height: 6.0,
-                    decoration: BoxDecoration(
-                      color: _currentImageIndex == i ? kColorSlider : Colors.grey,
-                      borderRadius: BorderRadius.circular(4.0),
+            Container(
+              decoration: const BoxDecoration(
+                  color: kColorPrimary,
+                  borderRadius: BorderRadius.all(Radius.circular(40))),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        aspectRatio: 2.0,
+                        height: 300,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlayInterval: const Duration(seconds: 3),
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
+                        enlargeCenterPage: true,
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) =>
+                            setState(() => _currentImageIndex = index),
+                      ),
+                      items: images,
                     ),
                   ),
-              ],
+                  SizedBox(
+                    height: 20,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int i = 0; i < widget.product.images!.length; i++)
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                            width: _currentImageIndex == i ? 8.0 : 6.0,
+                            height: 6.0,
+                            decoration: BoxDecoration(
+                              color: _currentImageIndex == i
+                                  ? kColorSlider
+                                  : Colors.grey,
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 30),
             Container(
@@ -155,8 +172,7 @@ class _DetailProductState extends State<DetailProduct> {
                       style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white
-                      ),
+                          color: Colors.white),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -164,7 +180,8 @@ class _DetailProductState extends State<DetailProduct> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      PriceDetailProduct(product: widget.product, isSale: widget.isSale),
+                      PriceDetailProduct(
+                          product: widget.product, isSale: widget.isSale),
                       Column(
                         children: [
                           Container(
@@ -177,7 +194,10 @@ class _DetailProductState extends State<DetailProduct> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                const Icon(Icons.star, color: Colors.yellowAccent,),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.yellowAccent,
+                                ),
                                 Text(
                                   '${widget.product.rating}',
                                   style: const TextStyle(
@@ -189,30 +209,37 @@ class _DetailProductState extends State<DetailProduct> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () async{
-                              if(isFavorite) {
-                                await DB.instance.deleteProductFavorite(widget.product.id!, widget.ssn);
+                            onPressed: () async {
+                              if (isFavorite) {
+                                await DB.instance.deleteProductFavorite(
+                                    widget.product.id!, widget.ssn);
                               } else {
-                                await DB.instance.createProductFavorite(widget.product.id!, widget.ssn);
+                                await DB.instance.createProductFavorite(
+                                    widget.product.id!, widget.ssn);
                               }
                               setState(() {
+                                if (widget.restarFavoriteProducts != null) {
+                                  widget.restarFavoriteProducts!(
+                                      widget.product.id);
+                                }
                                 isFavorite = !isFavorite;
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text(isFavorite ?
-                                    'Product added to favorite' :
-                                    'Product removed from favorite')
-                                ),
+                                    content: Text(isFavorite
+                                        ? 'Product added to favorite'
+                                        : 'Product removed from favorite')),
                               );
                             },
-                            icon: isFavorite ? const Icon(
-                                Icons.favorite_outlined,
-                                color: Colors.red,
-                            ) : const Icon(
-                              Icons.favorite_outline_outlined,
-                              color: Colors.white,
-                            ),
+                            icon: isFavorite
+                                ? const Icon(
+                                    Icons.favorite_outlined,
+                                    color: Colors.red,
+                                  )
+                                : const Icon(
+                                    Icons.favorite_outline_outlined,
+                                    color: Colors.white,
+                                  ),
                           ),
                         ],
                       ),
@@ -221,10 +248,7 @@ class _DetailProductState extends State<DetailProduct> {
                   const SizedBox(height: 40),
                   Text(
                     widget.product.description!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                        color: Colors.white
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ],
               ),
@@ -234,13 +258,17 @@ class _DetailProductState extends State<DetailProduct> {
               padding: const EdgeInsets.only(bottom: 10),
               child: OvalButton(
                 text: 'Add to cart',
-                function: () async{
-                  final bool isExist = await DB.instance.existCart(widget.product.id!, widget.ssn);
-                  if(isExist){
-                    final int quantity = await DB.instance.countProductCart(widget.ssn, widget.product.id!);
-                    await DB.instance.updateCart(widget.product.id!, widget.ssn, (quantity + 1));
-                  }else{
-                    await DB.instance.createProductCart(widget.product.id!, widget.ssn);
+                function: () async {
+                  final bool isExist = await DB.instance
+                      .existCart(widget.product.id!, widget.ssn);
+                  if (isExist) {
+                    final int quantity = await DB.instance
+                        .countProductCart(widget.ssn, widget.product.id!);
+                    await DB.instance.updateCart(
+                        widget.product.id!, widget.ssn, (quantity + 1));
+                  } else {
+                    await DB.instance
+                        .createProductCart(widget.product.id!, widget.ssn);
                   }
                 },
               ),
@@ -251,9 +279,9 @@ class _DetailProductState extends State<DetailProduct> {
     );
   }
 
-  _createListBanner() async{
+  _createListBanner() async {
     final List<Container> copyImages = [];
-    if(widget.product.images != null){
+    if (widget.product.images != null) {
       for (var i = 0; i < widget.product.images!.length; i++) {
         copyImages.add(Container(
           decoration: BoxDecoration(
@@ -267,13 +295,7 @@ class _DetailProductState extends State<DetailProduct> {
       }
     }
     setState(() {
-      Images = copyImages;
+      images = copyImages;
     });
   }
 }
-
-
-
-
-
-

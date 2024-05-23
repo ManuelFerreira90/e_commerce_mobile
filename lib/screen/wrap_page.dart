@@ -9,8 +9,6 @@ import 'package:e_commerce_mobile/screen/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import '../database/db.dart';
 
 class WrapPage extends StatefulWidget {
@@ -43,24 +41,24 @@ class _WrapPageState extends State<WrapPage> {
   }
 
   _initCart() async{
-    favorite = await DB.instance.readAllFavorites(widget.userLogged.ssn!);
+    favorite = await DB.instance.readAllFavorites(widget.userLogged.ssn);
   }
 
   Widget? _renderBody(){
     switch (_currentIndex) {
       case 0:
         return HomePage(
-          imageUser: widget.userLogged.image!,
-          ssn: widget.userLogged.ssn!,
+          imageUser: widget.userLogged.image,
+          ssn: widget.userLogged.ssn,
         );
       case 1:
         _initCart();
         return FavoritePage(
-          ssn: widget.userLogged.ssn!,
+          ssn: widget.userLogged.ssn,
         );
       case 2:
         return CartPage(
-          ssn: widget.userLogged.ssn!,
+          ssn: widget.userLogged.ssn,
         );
       case 3:
         return ProfilePage(userLogged: widget.userLogged);
@@ -109,7 +107,7 @@ class _WrapPageState extends State<WrapPage> {
                 builder: (context) => SearchPage(
                   choiceView: 3,
                   search: value,
-                  ssn: widget.userLogged.ssn!,
+                  ssn: widget.userLogged.ssn,
                 ),
               ),
             );

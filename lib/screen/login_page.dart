@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 focusedBorder: kOutlineInputBorder,
                 suffixIcon: IconButton(
                     onPressed: (){

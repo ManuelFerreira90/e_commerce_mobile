@@ -21,7 +21,8 @@ class CardCarousel extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(
-            ssn: ssn,choiceView: 0,
+            ssn: ssn,
+            choiceView: 0,
             category: title)
         )
         );
@@ -31,7 +32,7 @@ class CardCarousel extends StatelessWidget {
         color: kColorPrimary,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Container(
+          child: SizedBox(
             width: width,
             height: height,
             child: Center(

@@ -148,6 +148,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   if(!valid){
                     return 'Please enter a valid phone number';
                   }
+                  return null;
                 }
               },
             ),
@@ -186,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 focusedBorder: kOutlineInputBorder,
                 suffixIcon: IconButton(
                   onPressed: (){
@@ -214,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
                 labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 focusedBorder: kOutlineInputBorder,
                 suffixIcon: IconButton(
                   onPressed: (){

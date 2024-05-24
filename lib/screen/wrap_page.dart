@@ -1,4 +1,3 @@
-import 'package:e_commerce_mobile/components/profile_avatar.dart';
 import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/cart_page.dart';
 import 'package:e_commerce_mobile/screen/favorite_page.dart';
@@ -10,9 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
 import '../database/db.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class WrapPage extends StatefulWidget {
-  WrapPage({
+  const WrapPage({
     super.key,
     required this.userLogged,
   });
@@ -40,11 +40,11 @@ class _WrapPageState extends State<WrapPage> {
     super.dispose();
   }
 
-  _initCart() async{
+  _initCart() async {
     favorite = await DB.instance.readAllFavorites(widget.userLogged.ssn);
   }
 
-  Widget? _renderBody(){
+  Widget? _renderBody() {
     switch (_currentIndex) {
       case 0:
         return HomePage(
@@ -67,11 +67,11 @@ class _WrapPageState extends State<WrapPage> {
     }
   }
 
-  Widget _widgetAppBar(){
+  Widget _widgetAppBar() {
     switch (_currentIndex) {
       case 3:
         return IconButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -81,12 +81,17 @@ class _WrapPageState extends State<WrapPage> {
                 ),
               );
             },
-            icon: const Icon(Icons.settings_outlined, color: Colors.white,)
-        );
+            icon: const Icon(
+              Icons.settings_outlined,
+              color: Colors.white,
+            ));
       default:
-        return ProfileAvatar(
-            radius: 25.0,
-            imageProfile: widget.userLogged.image
+        return Image(
+          image: CachedNetworkImageProvider(
+            widget.userLogged.image,
+            maxHeight: 40,
+            maxWidth: 40,
+          ),
         );
     }
   }
@@ -95,51 +100,50 @@ class _WrapPageState extends State<WrapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      toolbarHeight: 80,
-      leadingWidth: 300,
-      leading: Container(
-        margin: const EdgeInsets.only(left: 15),
-        child: AnimSearchBar(
-          onSubmitted: (value) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchPage(
-                  choiceView: 3,
-                  search: value,
-                  ssn: widget.userLogged.ssn,
+        toolbarHeight: 80,
+        leadingWidth: 300,
+        leading: Container(
+          margin: const EdgeInsets.only(left: 15),
+          child: AnimSearchBar(
+            onSubmitted: (value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchPage(
+                    choiceView: 3,
+                    search: value,
+                    ssn: widget.userLogged.ssn,
+                  ),
                 ),
-              ),
-            );
-          },
-          width: 400,
-          textController: _searchController,
-          onSuffixTap: () {
-            setState(() {
-              _searchController.clear();
-            });
-          },
-        ),
-      ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 15),
-          child: GestureDetector(
-            onTap: (){
+              );
+            },
+            width: 400,
+            textController: _searchController,
+            onSuffixTap: () {
               setState(() {
-                _currentIndex = 3;
+                _searchController.clear();
               });
             },
-            child: _widgetAppBar(),
           ),
         ),
-      ],
-    ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 15),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _currentIndex = 3;
+                });
+              },
+              child: _widgetAppBar(),
+            ),
+          ),
+        ],
+      ),
       body: _renderBody(),
       bottomNavigationBar: SalomonBar(
           setIndex: (i) => setState(() => _currentIndex = i),
-          currentIndex: _currentIndex
-      ),
+          currentIndex: _currentIndex),
     );
   }
 }
@@ -157,40 +161,37 @@ class SalomonBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SalomonBottomBar(
-    currentIndex: _currentIndex,
-    onTap: (i) => setIndex(i),
-    items: [
+      currentIndex: _currentIndex,
+      onTap: (i) => setIndex(i),
+      items: [
+        /// Home
+        SalomonBottomBarItem(
+          icon: const Icon(Icons.home),
+          title: const Text("Home"),
+          selectedColor: Colors.purple,
+        ),
 
-      /// Home
-      SalomonBottomBarItem(
-        icon: const Icon(Icons.home),
-        title: const Text("Home"),
-        selectedColor: Colors.purple,
-      ),
-    
-      /// Likes
-      SalomonBottomBarItem(
-        icon: const Icon(Icons.favorite_border),
-        title: const Text("Likes"),
-        selectedColor: Colors.pink,
-      ),
-    
-      /// Cart
-      SalomonBottomBarItem(
-        icon: const Icon(Icons.shopping_cart),
-        title: const Text("Cart"),
-        selectedColor: Colors.blue,
-      ),
-    
-      /// Profile
-      SalomonBottomBarItem(
-        icon: const Icon(Icons.person),
-        title: const Text("Profile"),
-        selectedColor: Colors.teal,
-      ),
-    ],
-        );
+        /// Likes
+        SalomonBottomBarItem(
+          icon: const Icon(Icons.favorite_border),
+          title: const Text("Likes"),
+          selectedColor: Colors.pink,
+        ),
+
+        /// Cart
+        SalomonBottomBarItem(
+          icon: const Icon(Icons.shopping_cart),
+          title: const Text("Cart"),
+          selectedColor: Colors.blue,
+        ),
+
+        /// Profile
+        SalomonBottomBarItem(
+          icon: const Icon(Icons.person),
+          title: const Text("Profile"),
+          selectedColor: Colors.teal,
+        ),
+      ],
+    );
   }
 }
-
-

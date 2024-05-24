@@ -55,13 +55,17 @@ class _FavoritePageState extends State<FavoritePage> {
             ),
             'No favorite products',
             favoriteProducts,
+            true,
+            context
           );
   }
 
-  removeProduct(int id){
-    setState(() {
-      favoriteProducts.removeWhere((element) => element.product.id == id);
-    });
+  removeProduct(int id) {
+    if (mounted) {
+      setState(() {
+        favoriteProducts.removeWhere((element) => element.product.id == id);
+      });
+    }
   }
 
   fetchApi() async {
@@ -70,19 +74,19 @@ class _FavoritePageState extends State<FavoritePage> {
     Map<String, dynamic> products = {};
     List<CardCarouselProducts> copyProducts = [];
 
-    for (var i = 0; i < favorite.length; i++) {
-      products = await getOneProducts(
-        context,
-        'https://dummyjson.com/products/${favorite[i]}',
-      );
-      copyProducts
-          .addAll(ConvertJsonCard.convertJsonOneProduct(products, widget.ssn, removeProduct));
+    if (mounted) {
+      for (var i = 0; i < favorite.length; i++) {
+        products = await getOneProducts(
+          context,
+          'https://dummyjson.com/products/${favorite[i]}',
+        );
+        copyProducts.addAll(ConvertJsonCard.convertJsonOneProduct(
+            products, widget.ssn, removeProduct));
+      }
+      setState(() {
+        favoriteProducts = copyProducts;
+        isLoading = false;
+      });
     }
-
-    setState(() {
-      favoriteProducts = copyProducts;
-      isLoading = false;
-    });
   }
-
 }

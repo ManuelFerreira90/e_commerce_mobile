@@ -261,14 +261,18 @@ class _RegisterPageState extends State<RegisterPage> {
     String jsonData = prepareRequestBody(body);
 
     var overlayEntry = OverlayEntry(builder: (context) => const LoadingOverlay());
-    Overlay.of(context).insert(overlayEntry);
+    if(mounted){
+      Overlay.of(context).insert(overlayEntry);
+    }
     var response = await makePostRequest(url.toString(), jsonData, {"Content-Type": "application/json"});
     overlayEntry.remove();
 
-    if (response.statusCode == 200) {
+    if(mounted){
+      if (response.statusCode == 200) {
       Navigator.pop(context);
     } else {
       handleAPIError(context, response);
+    }
     }
   }
 

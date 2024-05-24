@@ -28,6 +28,27 @@ class ConvertJsonCard {
     return listBanners;
   }
 
+  static List<BannerModel> getListBanner(){
+    List<BannerModel> listBanners = [];
+    listBanners.add(BannerModel(
+      id: '78',
+      imagePath: 'https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Pro%2014%20Inch%20Space%20Grey/1.png',
+    ));
+    listBanners.add(BannerModel(
+      id: '123',
+      imagePath: 'https://cdn.dummyjson.com/products/images/smartphones/iPhone%2013%20Pro/thumbnail.png',
+    ));
+    listBanners.add(BannerModel(
+      id: '6',
+      imagePath: 'https://cdn.dummyjson.com/products/images/fragrances/Calvin%20Klein%20CK%20One/thumbnail.png',
+    ));
+    listBanners.add(BannerModel(
+      id: '186',
+      imagePath: 'https://cdn.dummyjson.com/products/images/womens-shoes/Calvin%20Klein%20Heel%20Shoes/thumbnail.png',
+    ));
+    return listBanners;
+  }
+
   static List<CardCarouselProducts> convertJsonOneProduct(Map<String, dynamic> products, String ssn, Function? remove) {
     List<CardCarouselProducts> cards = [];
     try {
@@ -35,7 +56,6 @@ class ConvertJsonCard {
       cards.add(CardCarouselProducts(
         resetProduct: remove,
         ssn: ssn,
-        isSale: false,
         product: Product(
           product['id'],
           product['title'],
@@ -47,6 +67,7 @@ class ConvertJsonCard {
           product['brand'],
           product['category'],
           product['thumbnail'],
+          product['tags'],
           product['images'],
         ),
         width: kWidthSales,
@@ -60,11 +81,12 @@ class ConvertJsonCard {
     return cards;
   }
 
-  static CardProductCart? convertJsonOneProductCart(Map<String, dynamic> products, String ssn, Function removeCardProduct) {
+  static CardProductCart? convertJsonOneProductCart(Map<String, dynamic> products, String ssn, Function removeCardProduct, Function setTotalPrice) {
     final CardProductCart card;
     try {
       final product = products;
       card = CardProductCart(
+        setTotalPrice: setTotalPrice,
         removeCardProduct: removeCardProduct,
         ssn: ssn,
         product: Product(
@@ -78,6 +100,7 @@ class ConvertJsonCard {
           product['brand'],
           product['category'],
           product['thumbnail'],
+          product['tags'],
           product['images'],
         ),
       );
@@ -90,7 +113,7 @@ class ConvertJsonCard {
     return null;
   }
 
-  static List<CardCarouselProducts> convertJsonProducts(List<dynamic> products, bool isSale, int limit, String ssn) {
+  static List<CardCarouselProducts> convertJsonProducts(List<dynamic> products, int limit, String ssn) {
     List<CardCarouselProducts> cards = [];
     try {
       final productList = products;
@@ -98,7 +121,6 @@ class ConvertJsonCard {
         final product = productList[i];
         cards.add(CardCarouselProducts(
           ssn: ssn,
-          isSale: isSale,
           product: Product(
             product['id'],
             product['title'],
@@ -110,6 +132,7 @@ class ConvertJsonCard {
             product['brand'],
             product['category'],
             product['thumbnail'],
+            product['tags'],
             product['images'],
           ),
           width: kWidthSales,

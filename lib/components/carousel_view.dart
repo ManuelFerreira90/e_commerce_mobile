@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 import '../styles/const.dart';
 
 class CarouselView extends StatelessWidget {
-  CarouselView({
+  const CarouselView({
     super.key,
     required this.title,
     required this.width,
     required this.height,
     this.cards,
     this.cardsProducts,
-    this.isSale,
     required this.ssn,
   });
 
@@ -23,7 +22,6 @@ class CarouselView extends StatelessWidget {
   final double height;
   final List<CardCarouselProducts>? cardsProducts;
   final List<CardCarousel>? cards;
-  final bool? isSale;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,6 @@ class CarouselView extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => SearchPage(
                   choiceView: 1,
-                  isSale: isSale!,
                   ssn: ssn,
                 ),
               ),

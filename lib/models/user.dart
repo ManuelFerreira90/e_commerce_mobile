@@ -8,9 +8,7 @@ class User {
   final String phone;
   final String username;
   final String password;
-  final DateTime birthDate;
   final String image;
-  final String domain;
   final Address address;
   final String university;
   final Bank bank;
@@ -28,9 +26,7 @@ class User {
     required this.phone,
     required this.username,
     required this.password,
-    required this.birthDate,
     required this.image,
-    required this.domain,
     required this.address,
     required this.university,
     required this.bank,

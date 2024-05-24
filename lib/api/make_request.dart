@@ -45,7 +45,7 @@ Future<Map<String, dynamic>> getOneProducts(BuildContext context, String adress)
 }
 
 Future<List<dynamic>> getCategoriesApi(BuildContext context) async{
-  var url = Uri.https('dummyjson.com', 'products/categories');
+  var url = Uri.https('dummyjson.com', 'products/category-list');
   var response = await makeGetRequest(url.toString(), {});
 
   if(response.statusCode == 200){

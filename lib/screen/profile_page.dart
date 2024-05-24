@@ -19,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -46,8 +45,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     ProfileAvatar(
-                        imageProfile: widget.userLogged.image,
-                        radius: 50,
+                      imageProfile: widget.userLogged.image,
+                      radius: 50,
                     ),
                     Text(
                       widget.userLogged.username,
@@ -57,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     Text(
-                     'Age: ${widget.userLogged.age.toString()}',
+                      'Age: ${widget.userLogged.age.toString()}',
                       style: const TextStyle(
                         fontSize: 10,
                       ),
@@ -84,44 +83,57 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.person_2_outlined, color: Colors.black,),
+                      leading: const Icon(
+                        Icons.person_2_outlined,
+                        color: Colors.black,
+                      ),
                       title: const Text(
-                          'First Name',
-                          style: kTitleStyleProfilePage,
+                        'First Name',
+                        style: kTitleStyleProfilePage,
                       ),
                       subtitle: Text(
-                          widget.userLogged.firstName,
-                          style: kInfoUserProfilePage,
+                        widget.userLogged.firstName,
+                        style: kInfoUserProfilePage,
                       ),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.email_outlined, color: Colors.black,),
+                      leading: const Icon(
+                        Icons.email_outlined,
+                        color: Colors.black,
+                      ),
                       title: const Text(
-                          'Email',
-                          style: kTitleStyleProfilePage,
+                        'Email',
+                        style: kTitleStyleProfilePage,
                       ),
                       subtitle: Text(
-                          widget.userLogged.email,
-                          style: kInfoUserProfilePage,
+                        widget.userLogged.email,
+                        style: kInfoUserProfilePage,
                       ),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.phone_outlined, color: Colors.black,),
+                      leading: const Icon(
+                        Icons.phone_outlined,
+                        color: Colors.black,
+                      ),
                       title: const Text(
-                          'Phone',
-                          style: kTitleStyleProfilePage,
+                        'Phone',
+                        style: kTitleStyleProfilePage,
                       ),
                       subtitle: Text(
-                          widget.userLogged.phone,
-                          style: kInfoUserProfilePage,
+                        widget.userLogged.phone,
+                        style: kInfoUserProfilePage,
                       ),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.work_outline, color: Colors.black,),
+                      leading: const Icon(
+                        Icons.work_outline,
+                        color: Colors.black,
+                      ),
                       title: const Text(
                         'Job',
                         style: kTitleStyleProfilePage,
@@ -140,9 +152,11 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: OvalButton(function: (){
-            _confirmLogout();
-          }, text: 'Logout'),
+          child: OvalButton(
+              function: () {
+                _confirmLogout();
+              },
+              text: 'Logout'),
         ),
       ],
     );
@@ -151,10 +165,12 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CheckPage()),
-    );
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CheckPage()),
+      );
+    }
   }
 
   Future<void> _confirmLogout() async {
@@ -164,12 +180,12 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text(
-                'Logout',
-                style: TextStyle(color: Colors.white),
+              'Logout',
+              style: TextStyle(color: Colors.white),
             ),
             content: const Text(
-                'Are you sure you want to logout?',
-                style: TextStyle(color: Colors.white),
+              'Are you sure you want to logout?',
+              style: TextStyle(color: Colors.white),
             ),
             actions: <Widget>[
               TextButton(
@@ -177,19 +193,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).pop();
                   },
                   child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.red),
-                  )
-              ),
+                    'Cancel',
+                    style: TextStyle(color: Colors.red),
+                  )),
               TextButton(
                   onPressed: () {
                     logout();
                   },
                   child: const Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.green),
-                  )
-              ),
+                    'Logout',
+                    style: TextStyle(color: Colors.green),
+                  )),
             ],
           );
         });

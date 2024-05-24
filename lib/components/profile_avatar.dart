@@ -19,6 +19,15 @@ class ProfileAvatar extends StatelessWidget {
           ? ClipRRect(
         borderRadius: BorderRadius.circular(50.0),
         child: Image.network(
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
           imageProfile!,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {

@@ -28,7 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<BannerModel> listBannersPreview = [];
-  List<CardCarouselProducts> salesCardPreview = [];
+  List<CardCarouselProducts> topCardPreview = [];
   List<CardCarouselProducts> allProductsCardPreview = [];
   List<CardCarousel> cardsCategories = [];
   List<CardCarouselProducts> popularCardPreview = [];
@@ -69,17 +69,22 @@ class _HomePageState extends State<HomePage> {
                 productApi['brand'],
                 productApi['category'],
                 productApi['thumbnail'],
+                productApi['tags'],
                 productApi['images'],
               );
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          DetailProduct(product: product, ssn: widget.ssn)));
-              overlayEntry.remove();
+              if (mounted) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DetailProduct(product: product, ssn: widget.ssn)));
+                overlayEntry.remove();
+              }
             },
             borderRadius: 30,
             activeColor: kColorSlider,
+            height: 250,
+            viewportFraction: 0.8,
             banners: listBannersPreview),
         const SizedBox(height: 20),
         CarouselView(
@@ -90,13 +95,23 @@ class _HomePageState extends State<HomePage> {
           height: kHeightCategories,
         ),
         const SizedBox(height: 20),
-        CarouselView(
-          ssn: widget.ssn,
-          cardsProducts: salesCardPreview,
-          title: 'Sales',
-          width: kWidthSales,
-          height: kHeightSales,
-          isSale: true,
+        // CarouselView(
+        //   ssn: widget.ssn,
+        //   cardsProducts: salesCardPreview,
+        //   title: 'Top Products',
+        //   width: kWidthSales,
+        //   height: kHeightSales,
+        // ),
+        const Text(
+          'Top Products',
+          style: kTitlesStyle,
+        ),
+        const SizedBox(height: 20),
+        Wrap(
+          runAlignment: WrapAlignment.start,
+          children: topCardPreview.isEmpty
+              ? List.generate(4, (_) => const PlaceholderCard())
+              : topCardPreview,
         ),
         const SizedBox(height: 20),
         const Text(
@@ -117,7 +132,6 @@ class _HomePageState extends State<HomePage> {
           title: 'All Products',
           width: kWidthSales,
           height: kHeightSales,
-          isSale: false,
         ),
       ],
     );
@@ -129,38 +143,38 @@ class _HomePageState extends State<HomePage> {
       'https://dummyjson.com/products',
     );
 
-    final List<BannerModel> copyBanner =
-        ConvertJsonCard.convertJsonBanners(products);
+    final List<BannerModel> copyBanner = ConvertJsonCard.getListBanner();
 
     final List<dynamic> categories = await getCategoriesApi(context);
+
     final List<CardCarousel> copyCategories =
         ConvertJsonCard.convertJsonCategories(categories, widget.ssn);
 
     final List<CardCarouselProducts> copyAllProducts =
-        ConvertJsonCard.convertJsonProducts(products, false, 10, widget.ssn);
+        ConvertJsonCard.convertJsonProducts(products, 10, widget.ssn);
 
     final List<dynamic> orderedProductsRating =
         HandleProducts.orderByRating(products);
     final List<CardCarouselProducts> copyPopular =
         ConvertJsonCard.convertJsonProducts(
-            orderedProductsRating, false, 6, widget.ssn);
+            orderedProductsRating, 6, widget.ssn);
 
-    final List<dynamic> orderedProductsDiscount =
-        HandleProducts.orderByDiscount(products);
+    final List<dynamic> orderedProductsPrice =
+        HandleProducts.orderByPrice(products);
     final List<CardCarouselProducts> copySales =
         ConvertJsonCard.convertJsonProducts(
-      orderedProductsDiscount,
-      true,
-      10,
+      orderedProductsPrice,
+      6,
       widget.ssn,
     );
-
-    setState(() {
-      listBannersPreview = copyBanner;
-      cardsCategories = copyCategories;
-      salesCardPreview = copySales;
-      allProductsCardPreview = copyAllProducts;
-      popularCardPreview = copyPopular;
-    });
+    if (mounted) {
+      setState(() {
+        listBannersPreview = copyBanner;
+        cardsCategories = copyCategories;
+        topCardPreview = copySales;
+        allProductsCardPreview = copyAllProducts;
+        popularCardPreview = copyPopular;
+      });
+    }
   }
 }

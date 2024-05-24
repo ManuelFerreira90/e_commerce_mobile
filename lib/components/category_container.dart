@@ -4,10 +4,10 @@ import '../models/product.dart';
 class CategoryContainer extends StatelessWidget {
   const CategoryContainer({
     super.key,
-    required this.product,
+    required this.text,
   });
 
-  final Product product;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CategoryContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Text(
-        product.category ?? '',
+        text ?? '',
         style: const TextStyle(
           color: Colors.white,
           fontSize: 10.0,

@@ -2,6 +2,7 @@ import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/card_product_cart.dart';
 import 'package:e_commerce_mobile/components/oval_button.dart';
 import 'package:e_commerce_mobile/database/db.dart';
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
@@ -23,6 +24,7 @@ class _CartPageState extends State<CartPage> {
   List<CardProductCart> cartProducts = [];
   late Map<String, dynamic> products;
   bool isLoading = false;
+  double total = 0;
 
   @override
   void initState() {
@@ -35,8 +37,21 @@ class _CartPageState extends State<CartPage> {
     super.dispose();
   }
 
+  setTotalPrice(double price, int operation, int quantity) {
+    setState(() {
+      if (operation == 1) {
+        total += price * quantity;
+      } else {
+        total -= price * quantity;
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context).value;
+
     return !isLoading
         ? const Center(
             child: CircularProgressIndicator(
@@ -50,19 +65,36 @@ class _CartPageState extends State<CartPage> {
                     horizontal: 25.0, vertical: 10.0),
                 child: ListView(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Column(
-                          children: cartProducts,
-                        ),
+                    Center(
+                      child: Column(
+                        children: cartProducts,
                       ),
                     ),
                     const SizedBox(height: 10),
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: kColorPrimary,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '\$ ${total.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+
+                    ),
+                    const SizedBox(height: 20),
                     OvalButton(
                       function: () async {
                         await DB.instance.deleteAllCart(widget.ssn);
                         setState(() {
+                          total = 0;
                           cartProducts.clear();
                         });
 
@@ -81,14 +113,18 @@ class _CartPageState extends State<CartPage> {
             ]),
             'No products in the cart',
             cartProducts,
+            hasConnection,
+            context
           );
   }
 
   removeCardProduct(int numberProduct) {
-    setState(() {
-      cartProducts
-          .removeWhere((element) => element.product.id == numberProduct);
-    });
+    if (mounted) {
+      setState(() {
+        cartProducts
+            .removeWhere((element) => element.product.id == numberProduct);
+      });
+    }
   }
 
   fetchApi() async {
@@ -101,15 +137,17 @@ class _CartPageState extends State<CartPage> {
           context, 'https://dummyjson.com/products/${cart[i]}');
       final CardProductCart? cartProduct =
           ConvertJsonCard.convertJsonOneProductCart(
-              products, widget.ssn, removeCardProduct);
+              products, widget.ssn, removeCardProduct, setTotalPrice);
       if (cartProduct != null) {
         copyCartProducts.add(cartProduct);
       }
     }
 
-    setState(() {
-      cartProducts = copyCartProducts;
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        cartProducts = copyCartProducts;
+        isLoading = true;
+      });
+    }
   }
 }

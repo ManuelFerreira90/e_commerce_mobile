@@ -6,7 +6,7 @@ class PlaceholderCard extends StatefulWidget {
   const PlaceholderCard({super.key});
 
   @override
-  _PlaceholderCardState createState() => _PlaceholderCardState();
+  State<PlaceholderCard> createState() => _PlaceholderCardState();
 }
 
 class _PlaceholderCardState extends State<PlaceholderCard>

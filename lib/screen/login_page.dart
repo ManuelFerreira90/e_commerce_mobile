@@ -143,21 +143,27 @@ class _LoginPageState extends State<LoginPage> {
     String jsonData = prepareRequestBody(body);
 
     var overlayEntry = OverlayEntry(builder: (context) => const LoadingOverlay());
-    Overlay.of(context).insert(overlayEntry);
+    if(mounted){
+      Overlay.of(context).insert(overlayEntry);
+    }
     var response = await makePostRequest(url.toString(), jsonData, { 'Content-Type': 'application/json' });
     overlayEntry.remove();
 
     if(response.statusCode == 200){
       String token = jsonDecode(response.body)['token'];
       await prefs.setString('token', token);
-      Navigator.push(
+      if(mounted){
+        Navigator.push(
           context,
           MaterialPageRoute(
               builder: (_) => const CheckPage(),
           ),
       );
+      }
     } else {
-      handleAPIError(context, response);
+      if(mounted){
+        handleAPIError(context, response);
+      }
     }
   }
 }

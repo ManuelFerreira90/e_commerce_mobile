@@ -10,7 +10,6 @@ class SearchPage extends StatefulWidget {
     super.key,
     required this.choiceView,
     this.category,
-    this.isSale,
     this.search,
     required this.ssn,
   });
@@ -18,7 +17,6 @@ class SearchPage extends StatefulWidget {
   final String ssn;
   int choiceView;
   final String? category;
-  bool? isSale;
   String? search;
 
   @override
@@ -71,12 +69,18 @@ class _SearchPageState extends State<SearchPage> {
         title: Container(
           margin: const EdgeInsets.only(left: 15),
           child: AnimSearchBar(
-            onSubmitted: (value) async{
+            onSubmitted: (value) async {
               sizeProducts = 0;
               productsCards.clear();
               products.clear();
               widget.search = value;
+              setState(() {
+                isLoadingProducts = true;
+              });
               await fetchApi();
+              setState(() {
+                isLoadingProducts = false;
+              });
             },
             width: 400,
             textController: _searchController,
@@ -114,81 +118,36 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-
-
   fetchApi() async {
     switch (widget.choiceView) {
       case 0:
         products += await RequestApiSearch.getProductsSearchCategory(
-            context,
-            widget.category!,
-            30,
-            sizeProducts
-        );
+            context, widget.category!, 30, sizeProducts);
         break;
       case 1:
-        products += await RequestApiSearch.getAllProductsSearch(context, 30, sizeProducts);
+        products += await RequestApiSearch.getAllProductsSearch(
+            context, 30, sizeProducts);
         break;
       case 3:
         products += await RequestApiSearch.getProductsSearch(
-            context,
-            widget.search!,
-            30,
-            sizeProducts,
+          context,
+          widget.search!,
+          30,
+          sizeProducts,
         );
         break;
     }
     final List<CardCarouselProducts> copyProducts =
         ConvertJsonCard.convertJsonProducts(
-            products, widget.isSale ?? false, products.length, widget.ssn);
+            products, products.length, widget.ssn);
 
     sizeProducts = products.length;
-    setState(() {
-      productsCards = copyProducts;
-    });
+    if (mounted) {
+      setState(() {
+        productsCards = copyProducts;
+      });
+    }
   }
-
-  // _fetchMoreProducts() async {
-  //   switch (widget.choiceView) {
-  //     case 0:
-  //       products = await getProducts(
-  //         context,
-  //         'https://dummyjson.com/products/category/${widget.category}?limit=$kLimit&skip=$sizeProducts',
-  //       );
-  //       break;
-  //     case 1:
-  //       products = await getProducts(
-  //         context,
-  //         'https://dummyjson.com/products?limit=$kLimit&skip=$sizeProducts',
-  //       );
-  //       break;
-  //     case 3:
-  //       products = await getProducts(
-  //         context,
-  //         'https://dummyjson.com/products/search?q=${widget.search}&limit=$kLimit&skip=$sizeProducts',
-  //       );
-  //       break;
-  //   }
-  //   sizeProducts += products.length;
-  //   final List<CardCarouselProducts> copyMore =
-  //       await ConvertJsonCard.convertJsonProducts(
-  //     products,
-  //     widget.isSale ?? false,
-  //     products.length,
-  //     widget.ssn,
-  //   );
-  //   setState(() {
-  //     productsCards.addAll(copyMore);
-  //   });
-  // }
-
-  // Future<List<dynamic>> _searchProducts(String search) async {
-  //   final List<dynamic> copyProducts = await getProducts(
-  //     context,
-  //     'https://dummyjson.com/products/search?q=$search',
-  //   );
-  //   return copyProducts;
-  // }
 
   loadingIndicatorWidget() {
     return ValueListenableBuilder(
@@ -208,29 +167,4 @@ class _SearchPageState extends State<SearchPage> {
       },
     );
   }
-
-  // _onSubmitted(String search) async {
-  //   setState(() {
-  //     isLoadingProducts = true;
-  //   });
-  //
-  //   widget.search = search;
-  //   products = await _searchProducts(search);
-  //   final List<CardCarouselProducts> copyProducts =
-  //       await ConvertJsonCard.convertJsonProducts(
-  //     products,
-  //     widget.isSale ?? false,
-  //     products.length,
-  //     widget.ssn,
-  //   );
-  //
-  //   sizeProducts = products.length;
-  //   setState(() {
-  //     productsCards = copyProducts;
-  //   });
-  //
-  //   setState(() {
-  //     isLoadingProducts = false;
-  //   });
-  // }
 }

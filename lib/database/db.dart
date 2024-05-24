@@ -136,34 +136,4 @@ class DB {
     await db.delete('productCart', where: 'userSsn = ?', whereArgs: [ssn]);
   }
 
-  // Future<bool> updateCart(int numberProduct, String ssn, int count) async {
-  //   final db = await database;
-  //
-  //   // Attempt to update the count
-  //   await db.update(
-  //     'productCart',
-  //     {'count': count},
-  //     where: 'numberProduct = ? AND userSsn = ?',
-  //     whereArgs: [numberProduct, ssn],
-  //   );
-  //
-  //   // Check if the updated row exists
-  //   final result = await db.query(
-  //     'productCart',
-  //     where: 'numberProduct = ? AND userSsn = ? AND count = ?',
-  //     whereArgs: [numberProduct, ssn, count],
-  //     limit: 1,
-  //   );
-  //
-  //   // Update was successful if the updated row exists
-  //   if (result.isNotEmpty) {
-  //     print('ProductCart updated successfully for numberProduct: $numberProduct, userSsn: $ssn. New count: $count');
-  //     return true;
-  //   } else {
-  //     print('Failed to update ProductCart for numberProduct: $numberProduct, userSsn: $ssn. No changes made.');
-  //     return false;
-  //   }
-  // }
-
-
 }

@@ -48,5 +48,3 @@ O app faz uso da API [dummyjson](http://dummyjson.com/), na tela de login os usu
 - Flutter
 - Dart
 
-## License
-

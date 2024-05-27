@@ -98,52 +98,55 @@ class _WrapPageState extends State<WrapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        leadingWidth: 300,
-        leading: Container(
-          margin: const EdgeInsets.only(left: 15),
-          child: AnimSearchBar(
-            onSubmitted: (value) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(
-                    choiceView: 3,
-                    search: value,
-                    ssn: widget.userLogged.ssn,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 80,
+          leadingWidth: 300,
+          leading: Container(
+            margin: const EdgeInsets.only(left: 15),
+            child: AnimSearchBar(
+              onSubmitted: (value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchPage(
+                      choiceView: 3,
+                      search: value,
+                      ssn: widget.userLogged.ssn,
+                    ),
                   ),
-                ),
-              );
-            },
-            width: 400,
-            textController: _searchController,
-            onSuffixTap: () {
-              setState(() {
-                _searchController.clear();
-              });
-            },
-          ),
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 15),
-            child: GestureDetector(
-              onTap: () {
+                );
+              },
+              width: 400,
+              textController: _searchController,
+              onSuffixTap: () {
                 setState(() {
-                  _currentIndex = 3;
+                  _searchController.clear();
                 });
               },
-              child: _widgetAppBar(),
             ),
           ),
-        ],
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 15),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _currentIndex = 3;
+                  });
+                },
+                child: _widgetAppBar(),
+              ),
+            ),
+          ],
+        ),
+        body: _renderBody(),
+        bottomNavigationBar: SalomonBar(
+            setIndex: (i) => setState(() => _currentIndex = i),
+            currentIndex: _currentIndex),
       ),
-      body: _renderBody(),
-      bottomNavigationBar: SalomonBar(
-          setIndex: (i) => setState(() => _currentIndex = i),
-          currentIndex: _currentIndex),
     );
   }
 }

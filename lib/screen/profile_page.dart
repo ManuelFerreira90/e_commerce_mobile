@@ -23,132 +23,139 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Column(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Column(
-                  children: [
-                    ProfileAvatar(
-                      imageProfile: widget.userLogged.image,
-                      radius: 50,
-                    ),
-                    Text(
-                      widget.userLogged.username,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Age: ${widget.userLogged.age.toString()}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 5,
                     ),
                   ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                  bottomLeft: Radius.circular(40),
-                ),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    children: [
+                      ProfileAvatar(
+                        imageProfile: widget.userLogged.image,
+                        radius: 50,
+                      ),
+                      Text(
+                        widget.userLogged.username,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black
+                        ),
+                      ),
+                      Text(
+                        'Age: ${widget.userLogged.age.toString()}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                            color: Colors.black
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(
-                        Icons.person_2_outlined,
-                        color: Colors.black,
-                      ),
-                      title: const Text(
-                        'First Name',
-                        style: kTitleStyleProfilePage,
-                      ),
-                      subtitle: Text(
-                        widget.userLogged.firstName,
-                        style: kInfoUserProfilePage,
-                      ),
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.email_outlined,
-                        color: Colors.black,
-                      ),
-                      title: const Text(
-                        'Email',
-                        style: kTitleStyleProfilePage,
-                      ),
-                      subtitle: Text(
-                        widget.userLogged.email,
-                        style: kInfoUserProfilePage,
-                      ),
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.phone_outlined,
-                        color: Colors.black,
-                      ),
-                      title: const Text(
-                        'Phone',
-                        style: kTitleStyleProfilePage,
-                      ),
-                      subtitle: Text(
-                        widget.userLogged.phone,
-                        style: kInfoUserProfilePage,
-                      ),
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.work_outline,
-                        color: Colors.black,
-                      ),
-                      title: const Text(
-                        'Job',
-                        style: kTitleStyleProfilePage,
-                      ),
-                      subtitle: Text(
-                        widget.userLogged.job,
-                        style: kInfoUserProfilePage,
-                      ),
+              const SizedBox(height: 5),
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                    bottomLeft: Radius.circular(40),
+                  ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 5,
                     ),
                   ],
                 ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(
+                          Icons.person_2_outlined,
+                          color: Colors.black,
+                        ),
+                        title: const Text(
+                          'First Name',
+                          style: kTitleStyleProfilePage,
+                        ),
+                        subtitle: Text(
+                          widget.userLogged.firstName,
+                          style: kInfoUserProfilePage,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(
+                          Icons.email_outlined,
+                          color: Colors.black,
+                        ),
+                        title: const Text(
+                          'Email',
+                          style: kTitleStyleProfilePage,
+                        ),
+                        subtitle: Text(
+                          widget.userLogged.email,
+                          style: kInfoUserProfilePage,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(
+                          Icons.phone_outlined,
+                          color: Colors.black,
+                        ),
+                        title: const Text(
+                          'Phone',
+                          style: kTitleStyleProfilePage,
+                        ),
+                        subtitle: Text(
+                          widget.userLogged.phone,
+                          style: kInfoUserProfilePage,
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(
+                          Icons.work_outline,
+                          color: Colors.black,
+                        ),
+                        title: const Text(
+                          'Job',
+                          style: kTitleStyleProfilePage,
+                        ),
+                        subtitle: Text(
+                          widget.userLogged.job,
+                          style: kInfoUserProfilePage,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-          ],
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

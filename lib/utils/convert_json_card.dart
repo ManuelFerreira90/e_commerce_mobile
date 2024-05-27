@@ -1,6 +1,8 @@
-import 'package:banner_carousel/banner_carousel.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_mobile/components/card_carousel.dart';
 import 'package:e_commerce_mobile/components/card_product_cart.dart';
+import 'package:e_commerce_mobile/utils/functions.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../components/card_carousel_products.dart';
 import '../styles/const.dart';
@@ -9,44 +11,47 @@ import '../models/product.dart';
 const maxDiscountedProducts = 5;
 
 class ConvertJsonCard {
-  static List<BannerModel> convertJsonBanners(List<dynamic> products) {
-    List<BannerModel> listBanners = [];
-    try {
-      final productList = products;
-      for (var i = 0; i < productList.length && i < maxDiscountedProducts; i++) {
-        final product = productList[i];
-        listBanners.add(BannerModel(
-          id: product['id'].toString(),
-          imagePath: product['thumbnail'].toString(),
-        ));
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error parsing categories: $error');
-      }
-    }
-    return listBanners;
-  }
 
-  static List<BannerModel> getListBanner(){
-    List<BannerModel> listBanners = [];
-    listBanners.add(BannerModel(
-      id: '78',
-      imagePath: 'https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Pro%2014%20Inch%20Space%20Grey/1.png',
-    ));
-    listBanners.add(BannerModel(
-      id: '123',
-      imagePath: 'https://cdn.dummyjson.com/products/images/smartphones/iPhone%2013%20Pro/thumbnail.png',
-    ));
-    listBanners.add(BannerModel(
-      id: '6',
-      imagePath: 'https://cdn.dummyjson.com/products/images/fragrances/Calvin%20Klein%20CK%20One/thumbnail.png',
-    ));
-    listBanners.add(BannerModel(
-      id: '186',
-      imagePath: 'https://cdn.dummyjson.com/products/images/womens-shoes/Calvin%20Klein%20Heel%20Shoes/thumbnail.png',
-    ));
-    return listBanners;
+  static List<GestureDetector> getListImage(BuildContext context, String ssn){
+    List<GestureDetector> listImage = [];
+
+    listImage.add(
+      GestureDetector(
+        onTap: () async{
+          goToProductDetailFromSliderImage(context, ssn, '78');
+        },
+        child: ImageBanner(url: 'https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Pro%2014%20Inch%20Space%20Grey/1.png',),
+      )
+    );
+
+    listImage.add(
+        GestureDetector(
+          onTap: ()async{
+            goToProductDetailFromSliderImage(context, ssn, '7');
+          },
+          child: ImageBanner(url: 'https://cdn.dummyjson.com/products/images/fragrances/Chanel%20Coco%20Noir%20Eau%20De/1.png',),
+        )
+    );
+
+    listImage.add(
+        GestureDetector(
+          onTap: (){
+            goToProductDetailFromSliderImage(context, ssn, '8');
+          },
+          child: ImageBanner(url: "https://cdn.dummyjson.com/products/images/fragrances/Dior%20J'adore/1.png",),
+        )
+    );
+
+    listImage.add(
+        GestureDetector(
+          onTap: (){
+            goToProductDetailFromSliderImage(context, ssn, '186');
+          },
+          child: ImageBanner(url: 'https://cdn.dummyjson.com/products/images/womens-shoes/Calvin%20Klein%20Heel%20Shoes/1.png',),
+        )
+    );
+
+    return listImage;
   }
 
   static List<CardCarouselProducts> convertJsonOneProduct(Map<String, dynamic> products, String ssn, Function? remove) {
@@ -164,6 +169,40 @@ class ConvertJsonCard {
       }
     }
     return cards;
+  }
+}
+
+class ImageBanner extends StatelessWidget {
+  const ImageBanner({
+    super.key,
+    required this.url,
+  });
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image(
+      errorBuilder: (context, error, stackTrace) {
+        return const Icon(Icons.image_not_supported_outlined);
+      },
+      image: CachedNetworkImageProvider(
+        url,
+        maxHeight: 300,
+        maxWidth: 250,
+      ),
+      width: 300,
+      height: 250,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 }
 

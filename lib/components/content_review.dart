@@ -45,13 +45,13 @@ class ContentReview extends StatelessWidget {
                       children: [
                         Text(name,
                             style:
-                            const TextStyle(fontWeight: FontWeight.bold)),
+                            const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
                         const SizedBox(width: 5.0),
                         _reviewStar(),
                       ],
                     ),
                     const SizedBox(height: 10.0),
-                    Text(comment),
+                    Text(comment, style: const TextStyle(color: Colors.black54),),
                   ],
                 )),
           )

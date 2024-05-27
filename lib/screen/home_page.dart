@@ -1,14 +1,11 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/carousel_view.dart';
-import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/components/placeholder_card.dart';
-import 'package:e_commerce_mobile/models/product.dart';
-import 'package:e_commerce_mobile/screen/detail_product.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:e_commerce_mobile/utils/handle_products.dart';
 import 'package:flutter/material.dart';
-import 'package:banner_carousel/banner_carousel.dart';
 import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/components/card_carousel.dart';
 
@@ -27,11 +24,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<BannerModel> listBannersPreview = [];
   List<CardCarouselProducts> topCardPreview = [];
   List<CardCarouselProducts> allProductsCardPreview = [];
   List<CardCarousel> cardsCategories = [];
   List<CardCarouselProducts> popularCardPreview = [];
+  List<GestureDetector> images = [];
+  int _currentImageIndex = 0;
 
   @override
   void initState() {
@@ -49,43 +47,47 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.all(10),
       children: [
-        BannerCarousel(
-            onTap: (id) async {
-              var overlayEntry =
-                  OverlayEntry(builder: (context) => const LoadingOverlay());
-              Overlay.of(context).insert(overlayEntry);
-              final Map<String, dynamic> productApi = await getOneProducts(
-                context,
-                'https://dummyjson.com/products/$id',
-              );
-              final Product product = Product(
-                productApi['id'],
-                productApi['title'],
-                productApi['description'],
-                productApi['price'],
-                productApi['discountPercentage'],
-                productApi['rating'],
-                productApi['stock'],
-                productApi['brand'],
-                productApi['category'],
-                productApi['thumbnail'],
-                productApi['tags'],
-                productApi['images'],
-              );
+        CarouselSlider(
+          options: CarouselOptions(
+            aspectRatio: 2.0,
+            height: 300,
+            initialPage: 0,
+            enableInfiniteScroll: true,
+            reverse: false,
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration:
+            const Duration(milliseconds: 800),
+            enlargeCenterPage: true,
+            scrollDirection: Axis.horizontal,
+            onPageChanged: (index, reason) {
               if (mounted) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DetailProduct(product: product, ssn: widget.ssn)));
-                overlayEntry.remove();
+                setState(() => _currentImageIndex = index);
               }
             },
-            borderRadius: 30,
-            activeColor: kColorSlider,
-            height: 250,
-            viewportFraction: 0.8,
-            banners: listBannersPreview),
+          ),
+          items: images,
+        ),
+        SizedBox(
+          height: 20,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (int i = 0; i < images.length; i++)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                  width: _currentImageIndex == i ? 8.0 : 6.0,
+                  height: 6.0,
+                  decoration: BoxDecoration(
+                    color: _currentImageIndex == i
+                        ? kColorSlider
+                        : Colors.grey,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                ),
+            ],
+          ),
+        ),
         const SizedBox(height: 20),
         CarouselView(
           ssn: widget.ssn,
@@ -95,35 +97,40 @@ class _HomePageState extends State<HomePage> {
           height: kHeightCategories,
         ),
         const SizedBox(height: 20),
-        // CarouselView(
-        //   ssn: widget.ssn,
-        //   cardsProducts: salesCardPreview,
-        //   title: 'Top Products',
-        //   width: kWidthSales,
-        //   height: kHeightSales,
-        // ),
-        const Text(
-          'Top Products',
-          style: kTitlesStyle,
-        ),
-        const SizedBox(height: 20),
-        Wrap(
-          runAlignment: WrapAlignment.start,
-          children: topCardPreview.isEmpty
-              ? List.generate(4, (_) => const PlaceholderCard())
-              : topCardPreview,
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          'Top Rated',
-          style: kTitlesStyle,
-        ),
-        const SizedBox(height: 20),
-        Wrap(
-          runAlignment: WrapAlignment.start,
-          children: popularCardPreview.isEmpty
-              ? List.generate(4, (_) => const PlaceholderCard())
-              : popularCardPreview,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text(
+                'Top Products',
+                textAlign: TextAlign.start,
+                style: kTitlesStyle,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              runAlignment: WrapAlignment.start,
+              children: topCardPreview.isEmpty
+                  ? List.generate(4, (_) => const PlaceholderCard())
+                  : topCardPreview,
+            ),
+            const SizedBox(height: 20),
+            const Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text(
+                'Top Rated',
+                style: kTitlesStyle,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              runAlignment: WrapAlignment.start,
+              children: popularCardPreview.isEmpty
+                  ? List.generate(4, (_) => const PlaceholderCard())
+                  : popularCardPreview,
+            ),
+          ],
         ),
         const SizedBox(height: 20),
         CarouselView(
@@ -143,7 +150,8 @@ class _HomePageState extends State<HomePage> {
       'https://dummyjson.com/products',
     );
 
-    final List<BannerModel> copyBanner = ConvertJsonCard.getListBanner();
+    //final List<BannerModel> copyBanner = ConvertJsonCard.getListBanner();
+    final List<GestureDetector> copyImages = ConvertJsonCard.getListImage(context, widget.ssn);
 
     final List<dynamic> categories = await getCategoriesApi(context);
 
@@ -169,7 +177,8 @@ class _HomePageState extends State<HomePage> {
     );
     if (mounted) {
       setState(() {
-        listBannersPreview = copyBanner;
+        //listBannersPreview = copyBanner;
+        images = copyImages;
         cardsCategories = copyCategories;
         topCardPreview = copySales;
         allProductsCardPreview = copyAllProducts;

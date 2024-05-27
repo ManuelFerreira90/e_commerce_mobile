@@ -28,7 +28,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
   Widget _reviewLoading() {
     if (reviews.isEmpty) {
       return const Center(
-        child: Text('No reviews'),
+        child: Text('No reviews',),
       );
     } else {
       return Padding(

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -20,12 +18,14 @@ class DetailProduct extends StatefulWidget {
     required this.ssn,
     this.isSale,
     this.restarFavoriteProducts,
+    //this.idProduct,
   });
 
-  final Product product;
+  Product product;
   final String ssn;
   final bool? isSale;
   final Function? restarFavoriteProducts;
+  //final int? idProduct;
 
   @override
   State<DetailProduct> createState() => _DetailProductState();
@@ -36,11 +36,12 @@ class _DetailProductState extends State<DetailProduct> {
   int _currentImageIndex = 0;
   bool isFavorite = false;
   late TextEditingController _searchController;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _createListBanner();
+    _createListImage();
     _setIsFavorite();
     _searchController = TextEditingController();
   }
@@ -57,12 +58,13 @@ class _DetailProductState extends State<DetailProduct> {
     if (mounted) {
       setState(() {
         isFavorite = favorite;
+        isLoading = false;
       });
     }
   }
 
-  Widget _returnTags(){
-    if(widget.product.tags != null){
+  Widget _returnTags() {
+    if (widget.product.tags != null) {
       return Wrap(
         spacing: 5,
         children: [
@@ -70,7 +72,7 @@ class _DetailProductState extends State<DetailProduct> {
             CategoryContainer(text: widget.product.tags![i])
         ],
       );
-    }else{
+    } else {
       return const SizedBox();
     }
   }
@@ -81,7 +83,7 @@ class _DetailProductState extends State<DetailProduct> {
       appBar: AppBar(
         toolbarHeight: 80,
         title: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400) ,
+          constraints: const BoxConstraints(maxWidth: 400),
           child: AnimSearchBar(
             onSubmitted: (value) {
               Navigator.push(
@@ -107,7 +109,11 @@ class _DetailProductState extends State<DetailProduct> {
           ),
         ),
       ),
-      body: Padding(
+      body: isLoading ? const Center(
+        child: CircularProgressIndicator(
+          color: kColorSlider,
+        ),
+      ) : Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
         child: ListView(
           children: [
@@ -198,28 +204,38 @@ class _DetailProductState extends State<DetailProduct> {
                           product: widget.product, isSale: widget.isSale),
                       Column(
                         children: [
-                          Container(
-                            width: 75,
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: const Color(0xff2e2a1c),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.yellowAccent,
-                                ),
-                                Text(
-                                  '${widget.product.rating}',
-                                  style: const TextStyle(
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ReviewsPage(id: widget.product.id!),
+                                  ));
+                            },
+                            child: Container(
+                              width: 75,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: const Color(0xff2e2a1c),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  const Icon(
+                                    Icons.star,
                                     color: Colors.yellowAccent,
-                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    '${widget.product.rating}',
+                                    style: const TextStyle(
+                                      color: Colors.yellowAccent,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           IconButton(
@@ -274,25 +290,34 @@ class _DetailProductState extends State<DetailProduct> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          widget.product.brand != null ? Container(
-                            width: 150,
-                            child: Text(
-                              'Brand: ${widget.product.brand}',
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: const TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ) : const SizedBox.shrink(),
+                          widget.product.brand != null
+                              ? Container(
+                                  width: 150,
+                                  child: Text(
+                                    'Brand: ${widget.product.brand}',
+                                    textAlign: TextAlign.start,
+                                    overflow: TextOverflow.clip,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
                           Text(
                             'Stock: ${widget.product.stock}',
                             textAlign: TextAlign.start,
-                            style: const TextStyle(fontSize: 12, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.white),
                           ),
                         ],
                       ),
                       GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewsPage(id: widget.product.id!),));
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ReviewsPage(id: widget.product.id!),
+                              ));
                         },
                         child: Container(
                           width: 100,
@@ -320,27 +345,29 @@ class _DetailProductState extends State<DetailProduct> {
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: widget.product.stock != null || widget.product.stock != 0 ? OvalButton(
-                text: 'Add to cart',
-                function: () async {
-                  final bool isExist = await DB.instance
-                      .existCart(widget.product.id!, widget.ssn);
-                  if (isExist) {
-                    final int quantity = await DB.instance
-                        .countProductCart(widget.ssn, widget.product.id!);
-                    await DB.instance.updateCart(
-                        widget.product.id!, widget.ssn, (quantity + 1));
-                  } else {
-                    await DB.instance
-                        .createProductCart(widget.product.id!, widget.ssn);
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Product added to cart'),
-                    ),
-                  );
-                },
-              ) : const SizedBox(),
+              child: widget.product.stock != null && (widget.product.stock != null || widget.product.stock != 0)
+                  ? OvalButton(
+                      text: 'Add to cart',
+                      function: () async {
+                        final bool isExist = await DB.instance
+                            .existCart(widget.product.id!, widget.ssn);
+                        if (isExist) {
+                          final int quantity = await DB.instance
+                              .countProductCart(widget.ssn, widget.product.id!);
+                          await DB.instance.updateCart(
+                              widget.product.id!, widget.ssn, (quantity + 1));
+                        } else {
+                          await DB.instance.createProductCart(
+                              widget.product.id!, widget.ssn);
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Product added to cart'),
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(),
             )
           ],
         ),
@@ -348,7 +375,7 @@ class _DetailProductState extends State<DetailProduct> {
     );
   }
 
-  _createListBanner() async {
+  _createListImage() async {
     final List<Image> copyImages = [];
     if (widget.product.images != null) {
       for (var i = 0; i < widget.product.images!.length; i++) {

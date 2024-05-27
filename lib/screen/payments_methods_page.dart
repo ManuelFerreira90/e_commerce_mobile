@@ -27,6 +27,7 @@ class _PaymentsMethodsPageState extends State<PaymentsMethodsPage> {
           alignment: Alignment.topCenter,
           child: CreditCardUi(
             width: 300,
+            validFrom: '****',
             cardHolderFullName: '${widget.userLogged.firstName} ${widget.userLogged.lastName}',
             cardNumber: widget.userLogged.bank.cardNumber,
             validThru: widget.userLogged.bank.cardExpire,

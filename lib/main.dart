@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-ThemeData darkTheme = ThemeData.dark().copyWith(
-  textTheme: GoogleFonts.montserratAlternatesTextTheme(),
-);
+// final textTheme = TextTheme(
+//
+//   bodyText1: TextStyle(fontFamily: 'Montserrat', font: Font.family(customFont)),
+//   // Add other text styles as needed
+// );
+//
+// ThemeData darkTheme = ThemeData.dark().copyWith(
+//
+// );
 
 class ConnectionNotifier extends InheritedNotifier<ValueNotifier<bool>> {
   const ConnectionNotifier({
@@ -59,7 +65,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
-      theme: darkTheme,
+      theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Montserrat'),
       home: const CheckPage(),
     );
   }

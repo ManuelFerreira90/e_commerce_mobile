@@ -55,8 +55,7 @@ class _HomePageState extends State<HomePage> {
             enableInfiniteScroll: true,
             reverse: false,
             autoPlayInterval: const Duration(seconds: 3),
-            autoPlayAnimationDuration:
-            const Duration(milliseconds: 800),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
             enlargeCenterPage: true,
             scrollDirection: Axis.horizontal,
             onPageChanged: (index, reason) {
@@ -79,9 +78,7 @@ class _HomePageState extends State<HomePage> {
                   width: _currentImageIndex == i ? 8.0 : 6.0,
                   height: 6.0,
                   decoration: BoxDecoration(
-                    color: _currentImageIndex == i
-                        ? kColorSlider
-                        : Colors.grey,
+                    color: _currentImageIndex == i ? kColorSlider : Colors.grey,
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
@@ -98,7 +95,6 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 20),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Align(
               alignment: AlignmentDirectional.topStart,
@@ -110,6 +106,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Wrap(
+              alignment: WrapAlignment.start,
               runAlignment: WrapAlignment.start,
               children: topCardPreview.isEmpty
                   ? List.generate(4, (_) => const PlaceholderCard())
@@ -132,6 +129,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+  
+
         const SizedBox(height: 20),
         CarouselView(
           ssn: widget.ssn,
@@ -151,7 +150,8 @@ class _HomePageState extends State<HomePage> {
     );
 
     //final List<BannerModel> copyBanner = ConvertJsonCard.getListBanner();
-    final List<GestureDetector> copyImages = ConvertJsonCard.getListImage(context, widget.ssn);
+    final List<GestureDetector> copyImages =
+        ConvertJsonCard.getListImage(context, widget.ssn);
 
     final List<dynamic> categories = await getCategoriesApi(context);
 

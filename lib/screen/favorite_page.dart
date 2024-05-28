@@ -1,7 +1,6 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/database/db.dart';
-import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';

@@ -1,7 +1,6 @@
 import 'package:e_commerce_mobile/api/request_api_search.dart';
 import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../components/card_carousel_products.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';

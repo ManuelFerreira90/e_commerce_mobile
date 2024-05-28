@@ -4,7 +4,6 @@ import 'package:e_commerce_mobile/components/carousel_view.dart';
 import 'package:e_commerce_mobile/components/placeholder_card.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
-import 'package:e_commerce_mobile/utils/handle_products.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/components/card_carousel.dart';
@@ -146,10 +145,19 @@ class _HomePageState extends State<HomePage> {
   fetchApi() async {
     final List<dynamic> products = await getProducts(
       context,
-      'https://dummyjson.com/products',
+      'https://dummyjson.com/products?limit=10&skip=0',
     );
 
-    //final List<BannerModel> copyBanner = ConvertJsonCard.getListBanner();
+    final List<dynamic> orderedProductsPrice = await getProducts(
+      context, 
+      'https://dummyjson.com/products?sortBy=price&order=desc&limit=6&skip=0'
+    );
+
+    final List<dynamic> orderedProductsRating= await getProducts(
+      context, 
+      'https://dummyjson.com/products?sortBy=rating&order=desc&limit=6&skip=0'
+    );
+
     final List<GestureDetector> copyImages =
         ConvertJsonCard.getListImage(context, widget.ssn);
 
@@ -161,14 +169,10 @@ class _HomePageState extends State<HomePage> {
     final List<CardCarouselProducts> copyAllProducts =
         ConvertJsonCard.convertJsonProducts(products, 10, widget.ssn);
 
-    final List<dynamic> orderedProductsRating =
-        HandleProducts.orderByRating(products);
     final List<CardCarouselProducts> copyPopular =
         ConvertJsonCard.convertJsonProducts(
             orderedProductsRating, 6, widget.ssn);
-
-    final List<dynamic> orderedProductsPrice =
-        HandleProducts.orderByPrice(products);
+    
     final List<CardCarouselProducts> copySales =
         ConvertJsonCard.convertJsonProducts(
       orderedProductsPrice,
@@ -177,7 +181,6 @@ class _HomePageState extends State<HomePage> {
     );
     if (mounted) {
       setState(() {
-        //listBannersPreview = copyBanner;
         images = copyImages;
         cardsCategories = copyCategories;
         topCardPreview = copySales;

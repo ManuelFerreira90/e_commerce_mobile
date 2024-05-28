@@ -18,14 +18,12 @@ class DetailProduct extends StatefulWidget {
     required this.ssn,
     this.isSale,
     this.restarFavoriteProducts,
-    //this.idProduct,
   });
 
   Product product;
   final String ssn;
   final bool? isSale;
   final Function? restarFavoriteProducts;
-  //final int? idProduct;
 
   @override
   State<DetailProduct> createState() => _DetailProductState();

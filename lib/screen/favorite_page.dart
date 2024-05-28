@@ -1,10 +1,10 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/card_carousel_products.dart';
 import 'package:e_commerce_mobile/database/db.dart';
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
-import '../utils/functions.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({
@@ -35,14 +35,19 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: kColorSlider,
-            ),
-          )
-        : returnWidget(
-            ListView(
+
+    return _loadWidget();
+  }
+
+  Widget _loadWidget(){
+    if(isLoading){
+      return const Center(
+        child: CircularProgressIndicator(
+          color: kColorSlider,
+        ),
+      );
+    } else if(!isLoading && favoriteProducts.isNotEmpty){
+     return ListView(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -52,12 +57,18 @@ class _FavoritePageState extends State<FavoritePage> {
                   ),
                 ),
               ],
-            ),
-            'No favorite products',
-            favoriteProducts,
-            true,
-            context
-          );
+            );
+    } else {
+      return const Center(
+        child: Text(
+          'No favorite products',
+          style: TextStyle(
+            fontSize: 20,
+            color: kColorSlider,
+          ),
+        ),
+      );
+    }
   }
 
   removeProduct(int id) {

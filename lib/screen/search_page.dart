@@ -1,5 +1,7 @@
 import 'package:e_commerce_mobile/api/request_api_search.dart';
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../components/card_carousel_products.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
@@ -28,9 +30,14 @@ class _SearchPageState extends State<SearchPage> {
   List<CardCarouselProducts> productsCards = [];
   final loading = ValueNotifier(false);
   late final ScrollController _scrollController;
-  late List<dynamic> products = [];
   int sizeProducts = 0;
+  int totalProductsApi = 0;
   bool isLoadingProducts = true;
+  bool hasConnection = true;
+  final dropValue = ValueNotifier('');
+  final filterOptions = ['price down', 'price up', 'title down', 'title up', 'rating down', 'rating up'];
+  String sortBy = '';
+  String order = '';
 
   @override
   void initState() {
@@ -38,8 +45,7 @@ class _SearchPageState extends State<SearchPage> {
     _searchController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(infinityScroll);
-    fetchApi();
-    isLoadingProducts = false;
+    _initLoad();
   }
 
   @override
@@ -49,11 +55,18 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  _initLoad() async {
+    await fetchApi();
+    setState(() {
+      isLoadingProducts = false;
+    });
+  }
+
   infinityScroll() async {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !loading.value) {
-      if (sizeProducts < 100 && sizeProducts >= 30) {
+      if (sizeProducts < totalProductsApi && sizeProducts >= 30) {
         loading.value = true;
         await fetchApi();
         loading.value = false;
@@ -63,6 +76,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context).value;
+    this.hasConnection = hasConnection;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
@@ -72,8 +88,11 @@ class _SearchPageState extends State<SearchPage> {
             onSubmitted: (value) async {
               sizeProducts = 0;
               productsCards.clear();
-              products.clear();
               widget.search = value;
+              dropValue.value = '';
+              sortBy = '';
+              order = '';
+              widget.choiceView = 3;
               setState(() {
                 isLoadingProducts = true;
               });
@@ -92,59 +111,161 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-      body: isLoadingProducts
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: kColorSlider,
-              ),
-            )
-          : Stack(children: [
-              ListView(
-                controller: _scrollController,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Wrap(
-                        alignment: WrapAlignment.start,
-                        children: productsCards,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              loadingIndicatorWidget(),
-            ]),
+      body: _loadWidget(),
     );
   }
 
+  Widget _loadWidget() {
+    if (isLoadingProducts && hasConnection) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: kColorSlider,
+        ),
+      );
+    } else if (!isLoadingProducts &&
+        hasConnection &&
+        productsCards.isNotEmpty) {
+      return Stack(children: [
+        ListView(
+          controller: _scrollController,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ValueListenableBuilder(
+                      valueListenable: dropValue,
+                      builder: (BuildContext context, String value, _) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: SizedBox(
+                            width: 180,
+                            child: DropdownButtonFormField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              isExpanded: true,
+                              hint: const Text('Filter'),
+                              value: (value.isEmpty) ? null : value,
+                              onChanged: (option) async{
+                                    dropValue.value = option.toString();
+                                    productsCards.clear();
+                                    sizeProducts = 0;
+                                    List<String>? words = option?.split(" ");
+                                    if(words != null){
+                                      sortBy = words[0];
+                                      if(words[1] == 'down') {
+                                        order = 'desc';
+                                      }
+                                      else {
+                                        order = 'asc';
+                                      }
+                                    }
+                              
+                                  setState(() {
+                                    isLoadingProducts = true;
+                                  });
+                                  await fetchApi();
+                                  setState(() {
+                                    isLoadingProducts = false;
+                                  });
+                              },
+                              items: filterOptions
+                                  .map((op) => DropdownMenuItem(
+                                        value: op,
+                                        child: Text(op),
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        );
+                      }),
+                  dropValue.value != '' ? IconButton(
+                    onPressed: ()async {
+                      dropValue.value = '';
+                      productsCards.clear();
+                      sizeProducts = 0;
+                      sortBy = '';
+                      order = '';
+                      setState(() {
+                        isLoadingProducts = true;
+                      });
+                      await fetchApi();
+                      setState(() {
+                        isLoadingProducts = false;
+                      });
+
+                    }, 
+                    icon: const Icon(Icons.remove_circle_outline, color: Colors.white,),
+                  ) : const SizedBox(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  children: productsCards,
+                ),
+              ),
+            ),
+          ],
+        ),
+        loadingIndicatorWidget(),
+      ]);
+    } else if (!hasConnection) {
+      return const Center(
+        child: Text('No internet connection',
+            style: TextStyle(
+              color: kColorSlider,
+              fontSize: 20,
+            )),
+      );
+    } else {
+      return const Center(
+        child: Text('No results found',
+            style: TextStyle(
+              color: kColorSlider,
+              fontSize: 20,
+            )),
+      );
+    }
+  }
+
   fetchApi() async {
+    Map<String, dynamic> response = {};
+    List<dynamic> products = [];
+
     switch (widget.choiceView) {
       case 0:
-        products += await RequestApiSearch.getProductsSearchCategory(
-            context, widget.category!, 30, sizeProducts);
+        response = await RequestApiSearch.getProductsSearchCategory(
+            context, widget.category!, 30, sizeProducts, sortBy, order);
         break;
       case 1:
-        products += await RequestApiSearch.getAllProductsSearch(
-            context, 30, sizeProducts);
+        response = await RequestApiSearch.getAllProductsSearch(
+            context, 30, sizeProducts, sortBy, order);
         break;
       case 3:
-        products += await RequestApiSearch.getProductsSearch(
-          context,
-          widget.search!,
-          30,
-          sizeProducts,
-        );
+        response = await RequestApiSearch.getProductsSearch(
+            context, widget.search!, 30, sizeProducts, sortBy, order);
         break;
     }
+    products = response['products'];
+    totalProductsApi = response['total'];
+
     final List<CardCarouselProducts> copyProducts =
         ConvertJsonCard.convertJsonProducts(
             products, products.length, widget.ssn);
 
-    sizeProducts = products.length;
+    sizeProducts += copyProducts.length;
     if (mounted) {
       setState(() {
-        productsCards = copyProducts;
+        productsCards.addAll(copyProducts);
       });
     }
   }

@@ -2,7 +2,6 @@ import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/screen/detail_product.dart';
 import '../models/product.dart';
-import '../styles/const.dart';
 import 'package:flutter/material.dart';
 
 calculateDiscount(Product product) {
@@ -11,33 +10,6 @@ calculateDiscount(Product product) {
   return (product.price! - discount).toStringAsFixed(2);
 }
 
-Widget returnWidget(Widget widget, String text, List<dynamic> product,
-  bool hasConnection, BuildContext context) {
-
-  verifyConnection(context, hasConnection);  
-
-  return product.isEmpty
-      ? Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: kColorSlider,
-              fontSize: 20,
-            ),
-          ),
-        )
-      : widget;
-}
-
-verifyConnection(BuildContext context, bool hasConnection){
-    if (!hasConnection) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('No internet connection'),
-      ),
-    );
-  }
-}
 
 goToProductDetailFromSliderImage(BuildContext context, String ssn, String id) async {
     var overlayEntry =

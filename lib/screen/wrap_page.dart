@@ -1,3 +1,4 @@
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/models/user.dart';
 import 'package:e_commerce_mobile/screen/cart_page.dart';
 import 'package:e_commerce_mobile/screen/favorite_page.dart';
@@ -5,6 +6,7 @@ import 'package:e_commerce_mobile/screen/home_page.dart';
 import 'package:e_commerce_mobile/screen/profile_page.dart';
 import 'package:e_commerce_mobile/screen/search_page.dart';
 import 'package:e_commerce_mobile/screen/settings_page.dart';
+import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
@@ -27,6 +29,7 @@ class _WrapPageState extends State<WrapPage> {
   int _currentIndex = 0;
   late TextEditingController _searchController;
   late List<String> favorite;
+  bool hasConnection = true;
 
   @override
   void initState() {
@@ -98,6 +101,9 @@ class _WrapPageState extends State<WrapPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context).value;
+    this.hasConnection = hasConnection;
+
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -129,7 +135,7 @@ class _WrapPageState extends State<WrapPage> {
             ),
           ),
           actions: [
-            Container(
+            hasConnection ? Container(
               margin: const EdgeInsets.only(right: 15),
               child: GestureDetector(
                 onTap: () {
@@ -139,10 +145,18 @@ class _WrapPageState extends State<WrapPage> {
                 },
                 child: _widgetAppBar(),
               ),
-            ),
+            ) : const SizedBox.shrink()
           ],
         ),
-        body: _renderBody(),
+        body: hasConnection ? _renderBody() : const Center(
+        child: Text(
+          'No internet connection',
+          style: TextStyle(
+            fontSize: 20,
+            color: kColorSlider,
+          ),
+        ),
+      ), 
         bottomNavigationBar: SalomonBar(
             setIndex: (i) => setState(() => _currentIndex = i),
             currentIndex: _currentIndex),

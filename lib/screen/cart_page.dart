@@ -2,11 +2,9 @@ import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/card_product_cart.dart';
 import 'package:e_commerce_mobile/components/oval_button.dart';
 import 'package:e_commerce_mobile/database/db.dart';
-import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
-import '../utils/functions.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({
@@ -23,7 +21,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   List<CardProductCart> cartProducts = [];
   late Map<String, dynamic> products;
-  bool isLoading = false;
+  bool isLoading = true;
   double total = 0;
 
   @override
@@ -50,16 +48,19 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final hasConnection = ConnectionNotifier.of(context).value;
 
-    return !isLoading
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: kColorSlider,
-            ),
-          )
-        : returnWidget(
-            Stack(children: [
+    return _loadWidget();
+  }
+
+  Widget _loadWidget(){
+    if(isLoading){
+      return const Center(
+        child: CircularProgressIndicator(
+          color: kColorSlider,
+        ),
+      );
+    } else if(!isLoading && cartProducts.isNotEmpty){
+      return Stack(children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 25.0, vertical: 10.0),
@@ -110,12 +111,18 @@ class _CartPageState extends State<CartPage> {
                   ],
                 ),
               ),
-            ]),
-            'No products in the cart',
-            cartProducts,
-            hasConnection,
-            context
-          );
+            ]);
+    } else {
+      return const Center(
+        child: Text(
+          'No products in the cart',
+          style: TextStyle(
+            fontSize: 20,
+            color: kColorSlider,
+          ),
+        ),
+      );
+    }
   }
 
   removeCardProduct(int numberProduct) {
@@ -146,7 +153,7 @@ class _CartPageState extends State<CartPage> {
     if (mounted) {
       setState(() {
         cartProducts = copyCartProducts;
-        isLoading = true;
+        isLoading = false;
       });
     }
   }

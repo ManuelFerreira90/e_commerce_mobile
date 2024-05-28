@@ -26,6 +26,20 @@ Future<List<dynamic>> getProducts(BuildContext context, String adress) async{
   }
 }
 
+Future<int> getTotalProducts(BuildContext context) async{
+  final response = await makeGetRequest('https://dummyjson.com/products?limit=1', {});
+
+  if(response.statusCode == 200){
+    Map <String, dynamic> products = await jsonDecode(response.body);
+    final int totalProducts = products['total'];
+    return totalProducts;
+
+  }else{
+    handleAPIError(context, response);
+    return 0;
+  }
+}
+
 Future<Map<String, dynamic>> getOneProducts(BuildContext context, String adress) async{
   final response = await makeGetRequest(adress, {});
 

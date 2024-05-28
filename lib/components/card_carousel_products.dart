@@ -1,8 +1,6 @@
 import 'package:e_commerce_mobile/components/category_container.dart';
-import 'package:e_commerce_mobile/components/discount_container.dart';
 import 'package:e_commerce_mobile/models/product.dart';
 import 'package:e_commerce_mobile/screen/detail_product.dart';
-import 'package:e_commerce_mobile/utils/functions.dart';
 import 'package:flutter/material.dart';
 import '../styles/const.dart';
 import '../database/db.dart';

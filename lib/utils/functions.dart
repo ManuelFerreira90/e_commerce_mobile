@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/screen/detail_product.dart';
-
 import '../models/product.dart';
 import '../styles/const.dart';
 import 'package:flutter/material.dart';

@@ -1,8 +1,3 @@
-import 'package:e_commerce_mobile/components/card_carousel.dart';
-import 'package:e_commerce_mobile/components/card_carousel_products.dart';
-import 'package:e_commerce_mobile/components/loading_overlay.dart';
-import 'package:e_commerce_mobile/models/product.dart';
-import 'package:e_commerce_mobile/utils/convert_json_card.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;

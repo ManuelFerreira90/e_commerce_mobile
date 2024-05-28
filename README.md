@@ -3,7 +3,7 @@
 
 Este é um projeto de loja virtual desenvolvido com o objetivo de praticar e aprimorar 
 habilidades no uso do Flutter, um framework de desenvolvimento de aplicativos móveis. 
-A aplicação simula uma experiência de uma loja online, oferecendo recursos como login e registo, navegação entre categorias de produtos, visualização detalhada de itens, carrinho de compras, área de favoritos, área para pesquisa dos produtos, página com perfil do usuário, com seu endereço e método de pagamento.
+A aplicação simula uma experiência de uma loja online, oferecendo recursos como login e registo, navegação entre categorias de produtos, visualização detalhada de itens, carrinho de compras, área de favoritos, área para pesquisa dos produtos com opção para filtrar os produtos, página com perfil do usuário, com seu endereço e método de pagamento.
 
 ## Instruções de uso no Android
 1.Baixe o APK:

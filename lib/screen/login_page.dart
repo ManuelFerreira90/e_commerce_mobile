@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/components/oval_button.dart';
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/screen/check_page.dart';
 import 'package:e_commerce_mobile/screen/register_page.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
@@ -23,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   late TextEditingController _userNameController;
   late TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
+  bool hasConnection = true;
 
   @override
   void initState() {
@@ -40,6 +42,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context).value;
+    this.hasConnection = hasConnection;
+
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -135,6 +140,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login() async{
+    if (!hasConnection) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('No has connection'),));
+      return;
+    }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var url = Uri.https('dummyjson.com', 'auth/login');
     Map<String, dynamic> body = {

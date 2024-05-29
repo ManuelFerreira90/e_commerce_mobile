@@ -1,6 +1,7 @@
 import 'package:e_commerce_mobile/api/make_request.dart';
 import 'package:e_commerce_mobile/components/loading_overlay.dart';
 import 'package:e_commerce_mobile/components/oval_button.dart';
+import 'package:e_commerce_mobile/main.dart';
 import 'package:e_commerce_mobile/styles/const.dart';
 import 'package:e_commerce_mobile/utils/handle_api_error.dart';
 import 'package:e_commerce_mobile/utils/prepare_resquest_body.dart';
@@ -26,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController _phoneNumberController;
   late TextEditingController _userNameController;
   final _formKey = GlobalKey<FormState>();
+  bool hasConnection = true;
 
   @override
   void initState() {
@@ -53,202 +55,230 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context).value;
+    this.hasConnection = hasConnection;
+
     return Scaffold(
       appBar: AppBar(title: const Text('')),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: kPadding,
-          children: [
-            const Text('Register', textAlign: TextAlign.center, style: kTitleTextStyle),
-            const SizedBox(height: 20,),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _nameController,
-                    keyboardType: TextInputType.name,
-                    style: kFormTextStyle,
-                    cursorColor: Colors.lime,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      labelStyle: kLabelTextStyle,
-                      border: OutlineInputBorder(),
-                      focusedBorder: kOutlineInputBorder,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
+        child: ListView(padding: kPadding, children: [
+          const Text('Register',
+              textAlign: TextAlign.center, style: kTitleTextStyle),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _nameController,
+                  keyboardType: TextInputType.name,
+                  style: kFormTextStyle,
+                  cursorColor: Colors.lime,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: kLabelTextStyle,
+                    border: OutlineInputBorder(),
+                    focusedBorder: kOutlineInputBorder,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
                 ),
-                kSpaceWidth,
-                Expanded(
-                  child: TextFormField(
-                    controller: _lastNameController,
-                    keyboardType: TextInputType.name,
-                    style: kFormTextStyle,
-                    cursorColor: Colors.lime,
-                    decoration: const InputDecoration(
-                      labelText: 'Last Name',
-                      labelStyle: kLabelTextStyle,
-                      border: OutlineInputBorder(),
-                      focusedBorder: kOutlineInputBorder,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your last name';
-                      }
-                      return null;
-                    },
+              ),
+              kSpaceWidth,
+              Expanded(
+                child: TextFormField(
+                  controller: _lastNameController,
+                  keyboardType: TextInputType.name,
+                  style: kFormTextStyle,
+                  cursorColor: Colors.lime,
+                  decoration: const InputDecoration(
+                    labelText: 'Last Name',
+                    labelStyle: kLabelTextStyle,
+                    border: OutlineInputBorder(),
+                    focusedBorder: kOutlineInputBorder,
                   ),
-                ),
-              ],
-            ),
-            kSpaceHeight,
-            TextFormField(
-              controller: _userNameController,
-              keyboardType: TextInputType.name,
-              style: kFormTextStyle,
-              cursorColor: Colors.lime,
-              decoration: const InputDecoration(
-                labelText: 'User Name',
-                labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
-                focusedBorder: kOutlineInputBorder,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your user name';
-                }
-                return null;
-              },
-            ),
-            kSpaceHeight,
-            TextFormField(
-              controller: _phoneNumberController,
-              keyboardType: TextInputType.phone,
-              style: kFormTextStyle,
-              cursorColor: Colors.lime,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number',
-                labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
-                focusedBorder: kOutlineInputBorder,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your phone number';
-                }
-                else{
-                  final phoneNumber = PhoneNumber.parse(_phoneNumberController.text);
-                  final valid = phoneNumber.isValid();
-                  if(!valid){
-                    return 'Please enter a valid phone number';
-                  }
-                  return null;
-                }
-              },
-            ),
-            kSpaceHeight,
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              style: kFormTextStyle,
-              cursorColor: Colors.lime,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                labelStyle: kLabelTextStyle,
-                border: OutlineInputBorder(),
-                focusedBorder: kOutlineInputBorder,
-              ),
-              validator : (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                } else{
-                  final String email = _emailController.text.trim();
-                  final bool isValid = EmailValidator.validate(email);
-                  if(!isValid){
-                    return 'Please enter a valid email';
-                  }
-                }
-                return null;
-              },
-            ),
-            kSpaceHeight,
-            TextFormField(
-              controller: _passwordController,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: isNotVisibility,
-              style: kFormTextStyle,
-              cursorColor: Colors.lime,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                labelStyle: kLabelTextStyle,
-                border: const OutlineInputBorder(),
-                focusedBorder: kOutlineInputBorder,
-                suffixIcon: IconButton(
-                  onPressed: (){
-                    setState(() {
-                      isNotVisibility = !isNotVisibility;
-                    });
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your last name';
+                    }
+                    return null;
                   },
-                  icon: isNotVisibility2 ? const Icon(Icons.visibility, color: Colors.grey,) : const Icon(Icons.visibility_off, color: Colors.grey,),
                 ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
+            ],
+          ),
+          kSpaceHeight,
+          TextFormField(
+            controller: _userNameController,
+            keyboardType: TextInputType.name,
+            style: kFormTextStyle,
+            cursorColor: Colors.lime,
+            decoration: const InputDecoration(
+              labelText: 'User Name',
+              labelStyle: kLabelTextStyle,
+              border: OutlineInputBorder(),
+              focusedBorder: kOutlineInputBorder,
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your user name';
+              }
+              return null;
+            },
+          ),
+          kSpaceHeight,
+          TextFormField(
+            controller: _phoneNumberController,
+            keyboardType: TextInputType.phone,
+            style: kFormTextStyle,
+            cursorColor: Colors.lime,
+            decoration: const InputDecoration(
+              labelText: 'Phone Number',
+              labelStyle: kLabelTextStyle,
+              border: OutlineInputBorder(),
+              focusedBorder: kOutlineInputBorder,
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your phone number';
+              } else {
+                final phoneNumber =
+                    PhoneNumber.parse(_phoneNumberController.text);
+                final valid = phoneNumber.isValid();
+                if (!valid) {
+                  return 'Please enter a valid phone number';
                 }
                 return null;
-              },
+              }
+            },
+          ),
+          kSpaceHeight,
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            style: kFormTextStyle,
+            cursorColor: Colors.lime,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              labelStyle: kLabelTextStyle,
+              border: OutlineInputBorder(),
+              focusedBorder: kOutlineInputBorder,
             ),
-            kSpaceHeight,
-            TextFormField(
-              controller: _passwordConfirmController,
-              keyboardType: TextInputType.visiblePassword,
-              style: kFormTextStyle,
-              cursorColor: Colors.lime,
-              obscureText: isNotVisibility2,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                labelStyle: kLabelTextStyle,
-                border: const OutlineInputBorder(),
-                focusedBorder: kOutlineInputBorder,
-                suffixIcon: IconButton(
-                  onPressed: (){
-                    setState(() {
-                      isNotVisibility2 = !isNotVisibility2;
-                    });
-                  },
-                  icon: isNotVisibility2 ? const Icon(Icons.visibility, color: Colors.grey,) : const Icon(Icons.visibility_off, color: Colors.grey,),
-                ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              } else {
+                final String email = _emailController.text.trim();
+                final bool isValid = EmailValidator.validate(email);
+                if (!isValid) {
+                  return 'Please enter a valid email';
+                }
+              }
+              return null;
+            },
+          ),
+          kSpaceHeight,
+          TextFormField(
+            controller: _passwordController,
+            keyboardType: TextInputType.visiblePassword,
+            obscureText: isNotVisibility,
+            style: kFormTextStyle,
+            cursorColor: Colors.lime,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              labelStyle: kLabelTextStyle,
+              border: const OutlineInputBorder(),
+              focusedBorder: kOutlineInputBorder,
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    isNotVisibility = !isNotVisibility;
+                  });
+                },
+                icon: isNotVisibility2
+                    ? const Icon(
+                        Icons.visibility,
+                        color: Colors.grey,
+                      )
+                    : const Icon(
+                        Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your confirm password';
-                } else if(_passwordController.text != _passwordConfirmController.text){
-                  return 'Password and confirm password must be the same';
-                }
-                return null;
-              },
             ),
-            kSpaceHeight,
-            OvalButton(
-              function: (){
-              if(_formKey.currentState!.validate()){
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
+          ),
+          kSpaceHeight,
+          TextFormField(
+            controller: _passwordConfirmController,
+            keyboardType: TextInputType.visiblePassword,
+            style: kFormTextStyle,
+            cursorColor: Colors.lime,
+            obscureText: isNotVisibility2,
+            decoration: InputDecoration(
+              labelText: 'Confirm Password',
+              labelStyle: kLabelTextStyle,
+              border: const OutlineInputBorder(),
+              focusedBorder: kOutlineInputBorder,
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    isNotVisibility2 = !isNotVisibility2;
+                  });
+                },
+                icon: isNotVisibility2
+                    ? const Icon(
+                        Icons.visibility,
+                        color: Colors.grey,
+                      )
+                    : const Icon(
+                        Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your confirm password';
+              } else if (_passwordController.text !=
+                  _passwordConfirmController.text) {
+                return 'Password and confirm password must be the same';
+              }
+              return null;
+            },
+          ),
+          kSpaceHeight,
+          OvalButton(
+            function: () {
+              if (_formKey.currentState!.validate()) {
                 register();
               }
-            }, text: 'Register',)
-          ]
-        ),
+            },
+            text: 'Register',
+          )
+        ]),
       ),
     );
   }
 
   register() async {
+    if (!hasConnection) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('No has connection'),));
+      return;
+    }
+
     var url = Uri.https('dummyjson.com', 'user/add');
     Map<String, dynamic> body = {
       'firstName': _nameController.text.trim(),
@@ -260,21 +290,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
     String jsonData = prepareRequestBody(body);
 
-    var overlayEntry = OverlayEntry(builder: (context) => const LoadingOverlay());
-    if(mounted){
+    var overlayEntry =
+        OverlayEntry(builder: (context) => const LoadingOverlay());
+    if (mounted) {
       Overlay.of(context).insert(overlayEntry);
     }
-    var response = await makePostRequest(url.toString(), jsonData, {"Content-Type": "application/json"});
+    var response = await makePostRequest(
+        url.toString(), jsonData, {"Content-Type": "application/json"});
     overlayEntry.remove();
 
-    if(mounted){
+    if (mounted) {
       if (response.statusCode == 200) {
-      Navigator.pop(context);
-    } else {
-      handleAPIError(context, response);
-    }
+        Navigator.pop(context);
+      } else {
+        handleAPIError(context, response);
+      }
     }
   }
-
-
 }

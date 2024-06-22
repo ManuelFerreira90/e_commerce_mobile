@@ -128,8 +128,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-  
-
         const SizedBox(height: 20),
         CarouselView(
           ssn: widget.ssn,
@@ -148,38 +146,34 @@ class _HomePageState extends State<HomePage> {
       'https://dummyjson.com/products?limit=10&skip=0',
     );
 
-    final List<dynamic> orderedProductsPrice = await getProducts(
-      context, 
-      'https://dummyjson.com/products?sortBy=price&order=desc&limit=6&skip=0'
-    );
+    final List<dynamic> orderedProductsPrice = await getProducts(context,
+        'https://dummyjson.com/products?sortBy=price&order=desc&limit=6&skip=0');
 
-    final List<dynamic> orderedProductsRating= await getProducts(
-      context, 
-      'https://dummyjson.com/products?sortBy=rating&order=desc&limit=6&skip=0'
-    );
+    final List<dynamic> orderedProductsRating = await getProducts(context,
+        'https://dummyjson.com/products?sortBy=rating&order=desc&limit=6&skip=0');
 
-    final List<GestureDetector> copyImages =
-        ConvertJsonCard.getListImage(context, widget.ssn);
-
-    final List<dynamic> categories = await getCategoriesApi(context);
-
-    final List<CardCarousel> copyCategories =
-        ConvertJsonCard.convertJsonCategories(categories, widget.ssn);
-
-    final List<CardCarouselProducts> copyAllProducts =
-        ConvertJsonCard.convertJsonProducts(products, 10, widget.ssn);
-
-    final List<CardCarouselProducts> copyPopular =
-        ConvertJsonCard.convertJsonProducts(
-            orderedProductsRating, 6, widget.ssn);
-    
-    final List<CardCarouselProducts> copySales =
-        ConvertJsonCard.convertJsonProducts(
-      orderedProductsPrice,
-      6,
-      widget.ssn,
-    );
     if (mounted) {
+      final List<GestureDetector> copyImages =
+          ConvertJsonCard.getListImage(context, widget.ssn);
+
+      final List<dynamic> categories = await getCategoriesApi(context);
+
+      final List<CardCarousel> copyCategories =
+          ConvertJsonCard.convertJsonCategories(categories, widget.ssn);
+
+      final List<CardCarouselProducts> copyAllProducts =
+          ConvertJsonCard.convertJsonProducts(products, 10, widget.ssn);
+
+      final List<CardCarouselProducts> copyPopular =
+          ConvertJsonCard.convertJsonProducts(
+              orderedProductsRating, 6, widget.ssn);
+
+      final List<CardCarouselProducts> copySales =
+          ConvertJsonCard.convertJsonProducts(
+        orderedProductsPrice,
+        6,
+        widget.ssn,
+      );
       setState(() {
         images = copyImages;
         cardsCategories = copyCategories;

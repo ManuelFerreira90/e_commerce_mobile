@@ -302,6 +302,7 @@ class _RegisterPageState extends State<RegisterPage> {
       'email': _emailController.text.trim(),
       'password': _passwordController.text.trim(),
       'phone': _phoneNumberController.text.trim(),
+      'username' : '@${_userNameController.text.trim()}',
     };
 
     String jsonData = prepareRequestBody(body);
@@ -335,7 +336,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     address: Address(address: 'none', city: 'none', postalCode: 'none', state: 'none'),
                     university: 'none',
                     bank: Bank(cardExpire: 'none', cardNumber: 'none', cardType: 'none', currency: 'none'),
-                    ssn: '${responseDecoded['id']}${responseDecoded['username']}',
+                    ssn: '${responseDecoded['id']}',
                     crypto: Crypto(coin: 'none', wallet: 'none', network: 'none'),
                     job: 'none')),
           ),

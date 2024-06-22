@@ -55,17 +55,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         widget.userLogged.username,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black
-                        ),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       Text(
                         'Age: ${widget.userLogged.age.toString()}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                            color: Colors.black
-                        ),
+                        style:
+                            const TextStyle(fontSize: 10, color: Colors.black),
                       ),
                     ],
                   ),
@@ -215,4 +212,6 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         });
   }
+
+
 }

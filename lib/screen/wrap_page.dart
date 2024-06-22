@@ -30,6 +30,7 @@ class _WrapPageState extends State<WrapPage> {
   late TextEditingController _searchController;
   late List<String> favorite;
   bool hasConnection = true;
+  bool _imageError = false;
 
   @override
   void initState() {
@@ -80,6 +81,7 @@ class _WrapPageState extends State<WrapPage> {
                 MaterialPageRoute(
                   builder: (context) => SettingsPage(
                     userLogged: widget.userLogged,
+                    editUser: editUser,
                   ),
                 ),
               );
@@ -89,13 +91,22 @@ class _WrapPageState extends State<WrapPage> {
               color: Colors.white,
             ));
       default:
-        return Image(
-          image: CachedNetworkImageProvider(
-            widget.userLogged.image,
-            maxHeight: 40,
-            maxWidth: 40,
-          ),
-        );
+        return _imageError
+            ? CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.grey[200],
+                child: Icon(Icons.person, color: Colors.grey[600], size: 20),
+              )
+            : CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.transparent,
+                backgroundImage: NetworkImage(widget.userLogged.image),
+                onBackgroundImageError: (_, __) {
+                  setState(() {
+                    _imageError = true;
+                  });
+                },
+              );
     }
   }
 
@@ -135,33 +146,58 @@ class _WrapPageState extends State<WrapPage> {
             ),
           ),
           actions: [
-            hasConnection ? Container(
-              margin: const EdgeInsets.only(right: 15),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 3;
-                  });
-                },
-                child: _widgetAppBar(),
-              ),
-            ) : const SizedBox.shrink()
+            hasConnection
+                ? Container(
+                    margin: const EdgeInsets.only(right: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 3;
+                        });
+                      },
+                      child: _widgetAppBar(),
+                    ),
+                  )
+                : const SizedBox.shrink()
           ],
         ),
-        body: hasConnection ? _renderBody() : const Center(
-        child: Text(
-          'No internet connection',
-          style: TextStyle(
-            fontSize: 20,
-            color: kColorSlider,
-          ),
-        ),
-      ), 
+        body: hasConnection
+            ? _renderBody()
+            : const Center(
+                child: Text(
+                  'No internet connection',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: kColorSlider,
+                  ),
+                ),
+              ),
         bottomNavigationBar: SalomonBar(
             setIndex: (i) => setState(() => _currentIndex = i),
             currentIndex: _currentIndex),
       ),
     );
+  }
+
+  void editUser(
+      {required String firstName,
+        required String lastName,
+        required String userName,
+        required String phoneNumber,
+        required String age,
+        required String email,
+        required String job}) {
+    setState(() {
+      setState(() {
+        widget.userLogged.firstName = firstName;
+        widget.userLogged.lastName = lastName;
+        widget.userLogged.username = userName;
+        widget.userLogged.phone = phoneNumber;
+        widget.userLogged.age = num.parse(age);
+        widget.userLogged.email = email;
+        widget.userLogged.job = job;
+      });
+    });
   }
 }
 
@@ -211,4 +247,6 @@ class SalomonBar extends StatelessWidget {
       ],
     );
   }
+
+
 }

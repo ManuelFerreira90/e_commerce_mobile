@@ -40,3 +40,15 @@ goToProductDetailFromSliderImage(BuildContext context, String ssn, String id) as
                 DetailProduct(product: product, ssn: ssn)));
     overlayEntry.remove();
 }
+
+bool isValidDateFormat(String date) {
+  final RegExp dateRegExp = RegExp(
+    r'^(0[1-9]|1[0-2])\/\d{2}$',
+  );
+
+  if (!dateRegExp.hasMatch(date)) {
+    return false;
+  }
+
+  return true;
+}

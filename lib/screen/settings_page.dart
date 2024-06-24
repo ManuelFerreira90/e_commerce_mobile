@@ -103,7 +103,8 @@ class _SettingsPageState extends State<SettingsPage> {
         TextEditingController(text: widget.userLogged.lastName);
     TextEditingController emailController =
         TextEditingController(text: widget.userLogged.email);
-    TextEditingController jobController = TextEditingController(text: widget.userLogged.job);
+    TextEditingController jobController =
+        TextEditingController(text: widget.userLogged.job);
     TextEditingController phoneNumberController =
         TextEditingController(text: widget.userLogged.phone);
     TextEditingController userNameController =
@@ -113,217 +114,214 @@ class _SettingsPageState extends State<SettingsPage> {
     final formKey = GlobalKey<FormState>();
 
     showDialog(
-        context: context,
-        builder: (context) => Dialog(
-              backgroundColor: Colors.black,
-              child: SizedBox(
-                height: 600,
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black,
+        child: SizedBox(
+          height: 600,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: kPadding,
                     children: [
-                      Flexible(
-                        child: ListView(
-                          shrinkWrap: true,
-                          padding: kPadding,
-                          children: [
-                            const Text('Edit Profile',
-                                textAlign: TextAlign.center,
-                                style: kTitleTextStyle),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: firstNameController,
-                                    keyboardType: TextInputType.name,
-                                    style: kFormTextStyle,
-                                    cursorColor: Colors.lime,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Name',
-                                      labelStyle: kLabelTextStyle,
-                                      border: OutlineInputBorder(),
-                                      focusedBorder: kOutlineInputBorder,
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                kSpaceWidth,
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: lastNameController,
-                                    keyboardType: TextInputType.name,
-                                    style: kFormTextStyle,
-                                    cursorColor: Colors.lime,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Last Name',
-                                      labelStyle: kLabelTextStyle,
-                                      border: OutlineInputBorder(),
-                                      focusedBorder: kOutlineInputBorder,
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your last name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            kSpaceHeight,
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: userNameController,
-                                    keyboardType: TextInputType.name,
-                                    style: kFormTextStyle,
-                                    cursorColor: Colors.lime,
-                                    decoration: const InputDecoration(
-                                      labelText: 'User Name',
-                                      labelStyle: kLabelTextStyle,
-                                      border: OutlineInputBorder(),
-                                      focusedBorder: kOutlineInputBorder,
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your user name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                kSpaceWidth,
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: ageController,
-                                    keyboardType: TextInputType.number,
-                                    style: kFormTextStyle,
-                                    cursorColor: Colors.lime,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Age',
-                                      labelStyle: kLabelTextStyle,
-                                      border: OutlineInputBorder(),
-                                      focusedBorder: kOutlineInputBorder,
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your user Age';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            kSpaceHeight,
-                            TextFormField(
-                              controller: phoneNumberController,
-                              keyboardType: TextInputType.phone,
-                              style: kFormTextStyle,
-                              cursorColor: Colors.lime,
-                              decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                labelStyle: kLabelTextStyle,
-                                border: OutlineInputBorder(),
-                                focusedBorder: kOutlineInputBorder,
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
-                                } else {
-                                  final phoneNumber = PhoneNumber.parse(
-                                      phoneNumberController.text);
-                                  final valid = phoneNumber.isValid();
-                                  if (!valid) {
-                                    return 'Please enter a valid phone number';
-                                  }
-                                  return null;
-                                }
-                              },
-                            ),
-                            kSpaceHeight,
-                            TextFormField(
-                              controller: emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              style: kFormTextStyle,
-                              cursorColor: Colors.lime,
-                              decoration: const InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: kLabelTextStyle,
-                                border: OutlineInputBorder(),
-                                focusedBorder: kOutlineInputBorder,
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your email';
-                                } else {
-                                  final String email =
-                                      emailController.text.trim();
-                                  final bool isValid =
-                                      EmailValidator.validate(email);
-                                  if (!isValid) {
-                                    return 'Please enter a valid email';
-                                  }
-                                }
-                                return null;
-                              },
-                            ),
-                            kSpaceHeight,
-                            TextFormField(
-                              controller: jobController,
+                      const Text('Edit Profile',
+                          textAlign: TextAlign.center, style: kTitleTextStyle),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: firstNameController,
                               keyboardType: TextInputType.name,
                               style: kFormTextStyle,
                               cursorColor: Colors.lime,
                               decoration: const InputDecoration(
-                                labelText: 'Job',
+                                labelText: 'Name',
                                 labelStyle: kLabelTextStyle,
                                 border: OutlineInputBorder(),
                                 focusedBorder: kOutlineInputBorder,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your Job';
+                                  return 'Please enter your name';
                                 }
                                 return null;
                               },
                             ),
-                            kSpaceHeight,
-                            OvalButton(
-                              function: () {
-                                if (formKey.currentState!.validate()) {
-                                  if (mounted) {
-                                    widget.editUser(
-                                      age: ageController.text,
-                                      email: emailController.text,
-                                      firstName: firstNameController.text,
-                                      lastName: lastNameController.text,
-                                      job: jobController.text,
-                                      phoneNumber: phoneNumberController.text,
-                                      userName: userNameController.text
-                                    );
-                                  }
-                                  Navigator.of(context).pop();
+                          ),
+                          kSpaceWidth,
+                          Expanded(
+                            child: TextFormField(
+                              controller: lastNameController,
+                              keyboardType: TextInputType.name,
+                              style: kFormTextStyle,
+                              cursorColor: Colors.lime,
+                              decoration: const InputDecoration(
+                                labelText: 'Last Name',
+                                labelStyle: kLabelTextStyle,
+                                border: OutlineInputBorder(),
+                                focusedBorder: kOutlineInputBorder,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your last name';
                                 }
+                                return null;
                               },
-                              text: 'Edit',
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
+                      kSpaceHeight,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: userNameController,
+                              keyboardType: TextInputType.name,
+                              style: kFormTextStyle,
+                              cursorColor: Colors.lime,
+                              decoration: const InputDecoration(
+                                labelText: 'User Name',
+                                labelStyle: kLabelTextStyle,
+                                border: OutlineInputBorder(),
+                                focusedBorder: kOutlineInputBorder,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your user name';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          kSpaceWidth,
+                          Expanded(
+                            child: TextFormField(
+                              controller: ageController,
+                              keyboardType: TextInputType.number,
+                              style: kFormTextStyle,
+                              cursorColor: Colors.lime,
+                              decoration: const InputDecoration(
+                                labelText: 'Age',
+                                labelStyle: kLabelTextStyle,
+                                border: OutlineInputBorder(),
+                                focusedBorder: kOutlineInputBorder,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your user Age';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      kSpaceHeight,
+                      TextFormField(
+                        controller: phoneNumberController,
+                        keyboardType: TextInputType.phone,
+                        style: kFormTextStyle,
+                        cursorColor: Colors.lime,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number',
+                          labelStyle: kLabelTextStyle,
+                          border: OutlineInputBorder(),
+                          focusedBorder: kOutlineInputBorder,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your phone number';
+                          } else {
+                            final phoneNumber =
+                                PhoneNumber.parse(phoneNumberController.text);
+                            final valid = phoneNumber.isValid();
+                            if (!valid) {
+                              return 'Please enter a valid phone number';
+                            }
+                            return null;
+                          }
+                        },
+                      ),
+                      kSpaceHeight,
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: kFormTextStyle,
+                        cursorColor: Colors.lime,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: kLabelTextStyle,
+                          border: OutlineInputBorder(),
+                          focusedBorder: kOutlineInputBorder,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          } else {
+                            final String email = emailController.text.trim();
+                            final bool isValid = EmailValidator.validate(email);
+                            if (!isValid) {
+                              return 'Please enter a valid email';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      kSpaceHeight,
+                      TextFormField(
+                        controller: jobController,
+                        keyboardType: TextInputType.name,
+                        style: kFormTextStyle,
+                        cursorColor: Colors.lime,
+                        decoration: const InputDecoration(
+                          labelText: 'Job',
+                          labelStyle: kLabelTextStyle,
+                          border: OutlineInputBorder(),
+                          focusedBorder: kOutlineInputBorder,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your Job';
+                          }
+                          return null;
+                        },
+                      ),
+                      kSpaceHeight,
+                      OvalButton(
+                        function: () {
+                          if (formKey.currentState!.validate()) {
+                            if (mounted) {
+                              widget.editUser(
+                                  age: ageController.text,
+                                  email: emailController.text,
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  job: jobController.text,
+                                  phoneNumber: phoneNumberController.text,
+                                  userName: userNameController.text);
+                            }
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        text: 'Edit',
+                      )
                     ],
                   ),
                 ),
-              ),
-            ));
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -25,7 +25,8 @@ A aplicação simula uma experiência de uma loja online, oferecendo recursos co
   - Após a instalação ser concluída com sucesso, localize o ícone do aplicativo na tela inicial ou no menu de aplicativos do seu dispositivo.  
   - Toque no ícone para abrir o aplicativo.
 
-O app faz uso da API [dummyjson](http://dummyjson.com/), na tela de login os usuário já estão pré-definidos, para logar no app consulte os usuários disponíveis em [users](http://dummyjson.com/user). A tela de registro simula um registro real de um usuário, mas não é confirmado o registro no banco de dados, só é feita a validação utilizando bibliotecas e a API.
+## API
+O app faz uso da API [dummyjson](http://dummyjson.com/)
 
 ## Instruções de instalação
 1. Clone o repositório do projeto em sua máquina local.

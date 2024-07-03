@@ -7,9 +7,9 @@ A aplicação simula uma experiência de uma loja online, oferecendo recursos co
 
 ### Capturas de Tela
 <div style="display: flex;">
-  <img src="" alt="1" width="250" />
-  <img src="" alt="2" width="250" />
-  <img src="" alt="3" width="250" />
+  <img src="./images_readme/image1.jpg" alt="1" width="250" />
+  <img src="./images_readme/image2.jpg" alt="2" width="250" />
+  <img src="./images_readme/image3.jpg" alt="3" width="250" />
 </div>
 
 ## Instruções de uso no Android
